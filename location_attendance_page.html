@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Location-Based Attendance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      text-align: center;
+      background: #f2f2f2;
+    }
+    #message {
+      font-size: 20px;
+      color: #333;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div id="message">📍 Checking your location, please wait...</div>
+
+  <script>
+    // Classroom location
+    const classroomLat = 31.3494833;
+    const classroomLon = 75.5573274;
+    const allowedDistance = 100; // in meters
+    const redirectUrl = "https://forms.gle/WLSmzCcAY48hpAjbA";
+
+    function toRad(x) {
+      return x * Math.PI / 180;
+    }
+
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3; // Earth radius in meters
+      const φ1 = toRad(lat1);
+      const φ2 = toRad(lat2);
+      const Δφ = toRad(lat2 - lat1);
+      const Δλ = toRad(lon2 - lon1);
+
+      const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ/2) * Math.sin(Δλ/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+      return R * c; // in meters
+    }
+
+    function checkLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+            const distance = getDistance(userLat, userLon, classroomLat, classroomLon);
+
+            if (distance <= allowedDistance) {
+              document.getElementById("message").innerHTML = "✅ Location verified. Redirecting to form...";
+              setTimeout(() => {
+                window.location.href = redirectUrl;
+              }, 1000);
+            } else {
+              document.getElementById("message").innerHTML = 
+                "❌ You are not near the classroom location.<br><br>Move closer to the class to mark your attendance.";
+            }
+          },
+          function(error) {
+            document.getElementById("message").innerHTML = 
+              "⚠️ Location access denied. Please allow GPS access to mark your attendance.";
+          }
+        );
+      } else {
+        document.getElementById("message").innerHTML = 
+          "❌ Your browser does not support geolocation.";
+      }
+    }
+
+    checkLocation();
+  </script>
+</body>
+</html>
