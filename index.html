@@ -192,6 +192,13 @@
       text-align: left;
     }
 
+    .footer-divider {
+      height: 1px;
+      background-color: #333;
+      margin: 1rem 0;
+      opacity: 0.6;
+    }
+
     .footer-section h4 {
       font-size: 0.9rem;
       margin-bottom: 0.5rem;
@@ -213,14 +220,6 @@
       font-size: 0.8rem;
     }
 
-    .footer-divider {
-      height: 1px;
-      background-color: #333;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      opacity: 0.6;
-    }
-
     .footer-bottom {
       font-size: 0.75rem;
       text-align: center;
@@ -234,25 +233,25 @@
       #map { height: 250px; }
 
       main {
-        padding: 1.5rem;
+        padding: 1rem;
         min-height: auto;
       }
 
       footer {
-        padding: 1.75rem 1rem;
+        padding: 1.5rem 1rem;
       }
 
       .footer-content {
         gap: 1rem;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
       }
 
       .footer-divider {
-        margin: 0.75rem 0;
+        margin: 0.5rem 0;
       }
 
       .footer-bottom {
-        margin-top: 0.75rem;
+        margin-top: 0.5rem;
       }
     }
 
@@ -311,9 +310,7 @@
         </ul>
       </div>
     </div>
-
     <div class="footer-divider"></div>
-
     <div class="footer-bottom">
       © 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)
     </div>
@@ -323,7 +320,7 @@
   <script>
     const requiredLat = 31.3494154;
     const requiredLng = 75.5573411;
-    const radius = 0.05;
+    const radius = 0.05; // 50 meters
 
     function getDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -378,6 +375,7 @@
       }
     );
 
+    // Handle preloader + animation start
     window.onload = function () {
       setTimeout(() => {
         document.getElementById('preloader').classList.add('fade-out');
