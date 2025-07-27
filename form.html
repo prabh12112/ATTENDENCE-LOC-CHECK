@@ -88,7 +88,7 @@
       margin-bottom: 0.5rem;
     }
 
-    input, select, textarea {
+    input {
       width: 100%;
       padding: 0.8rem;
       margin-bottom: 1rem;
@@ -96,6 +96,11 @@
       border-radius: 8px;
       background-color: #222;
       color: white;
+    }
+
+    input[readonly] {
+      background-color: #444;
+      cursor: not-allowed;
     }
 
     button {
@@ -109,8 +114,9 @@
       cursor: pointer;
     }
 
-    button:hover {
-      background-color: #03a9f4;
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
     }
 
     footer {
@@ -174,20 +180,22 @@
   <main>
     <div class="form-container">
       <h2>Attendance Form</h2>
-      <form>
-        <label for="name">Full Name</label>
-        <input type="text" id="name" name="name" required>
+      <form id="attendanceForm">
+        <label for="code">Unique Code</label>
+        <input type="text" id="code" required>
 
         <label for="roll">Roll Number</label>
-        <input type="text" id="roll" name="roll" required>
+        <input type="text" id="roll" required>
 
-        <label for="subject">Subject</label>
-        <input type="text" id="subject" name="subject" required>
+        <label for="name">Name</label>
+        <input type="text" id="name" readonly>
 
-        <label for="remarks">Remarks (optional)</label>
-        <textarea id="remarks" name="remarks"></textarea>
+        <label>
+          <input type="checkbox" id="confirm"> I confirm that I am present
+        </label>
 
-        <button type="submit">Submit</button>
+        <button type="submit" disabled>Submit</button>
+        <p id="status" style="margin-top:1rem; color: #f44336;"></p>
       </form>
     </div>
   </main>
@@ -224,5 +232,76 @@
       © 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)
     </div>
   </footer>
+
+  <script>
+    const students = {
+      "01": "CHIRAG RANA",
+      "02": "SHARANJIT SINGH",
+      "03": "ANEESH KUMAR",
+      "04": "HARSHDEEP SINGH",
+      "05": "RAJDEEP SINGH",
+      "06": "SAHIL",
+      "07": "DEEPAK",
+      "08": "KIRAN",
+      "09": "MANISHA",
+      "10": "ABHISHEK"
+      // Add more if needed
+    };
+
+    const form = document.getElementById("attendanceForm");
+    const codeInput = document.getElementById("code");
+    const rollInput = document.getElementById("roll");
+    const nameInput = document.getElementById("name");
+    const checkbox = document.getElementById("confirm");
+    const submitBtn = form.querySelector("button");
+    const status = document.getElementById("status");
+
+    function getTodayCode() {
+      const today = new Date();
+      const code = (today.getDate() * 7 + (today.getMonth() + 1)) % 1000;
+      return code.toString().padStart(3, '0');
+    }
+
+    function isWithinTimeWindow() {
+      const now = new Date();
+      const start = new Date(now);
+      const end = new Date(now);
+      start.setHours(13, 30, 0);
+      end.setHours(14, 15, 0);
+      return now >= start && now <= end;
+    }
+
+    function validateForm() {
+      const roll = rollInput.value.trim();
+      const code = codeInput.value.trim();
+      const correctCode = getTodayCode();
+      nameInput.value = students[roll] || "";
+
+      const valid = isWithinTimeWindow() && checkbox.checked && code === correctCode && students.hasOwnProperty(roll);
+      submitBtn.disabled = !valid;
+
+      if (!isWithinTimeWindow()) {
+        status.textContent = "Attendance is only open from 1:30 PM to 2:15 PM IST.";
+      } else if (code !== correctCode) {
+        status.textContent = "Invalid unique code.";
+      } else if (!students.hasOwnProperty(roll)) {
+        status.textContent = "Invalid roll number.";
+      } else if (!checkbox.checked) {
+        status.textContent = "Please confirm your presence.";
+      } else {
+        status.textContent = "";
+      }
+    }
+
+    codeInput.addEventListener("input", validateForm);
+    rollInput.addEventListener("input", validateForm);
+    checkbox.addEventListener("change", validateForm);
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("Attendance submitted for: " + rollInput.value);
+      // You will later send this to backend or email logic
+    });
+  </script>
 </body>
 </html>
