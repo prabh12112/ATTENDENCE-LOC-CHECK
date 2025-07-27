@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Location-Based Attendance</title>
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       padding: 0;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #1f4037, #99f2c8);
-      color: #fff;
+      background: #0e0e0e;
+      color: #f1f1f1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -20,32 +24,55 @@
     }
 
     .card {
-      background-color: rgba(0, 0, 0, 0.25);
+      background-color: #1a1a1a;
       padding: 2rem;
       border-radius: 16px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
       max-width: 90%;
+      transition: transform 0.3s ease;
     }
 
     h1 {
       font-size: 2rem;
       margin-bottom: 1rem;
+      color: #00f7ff;
     }
 
     #status {
       font-size: 1.2rem;
       margin-top: 1rem;
+      color: #ffffff;
     }
 
     .spinner {
       margin-top: 1rem;
       width: 40px;
       height: 40px;
-      border: 4px solid #ffffff50;
-      border-top: 4px solid #fff;
+      border: 4px solid #ffffff30;
+      border-top: 4px solid #00f7ff;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       display: inline-block;
+    }
+
+    .error-icon {
+      font-size: 3rem;
+      color: #ff4d4d;
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .error {
+      background-color: #2b0000;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
     }
 
     @keyframes spin {
@@ -60,9 +87,10 @@
   </style>
 </head>
 <body>
-  <div class="card">
+  <div class="card" id="card">
     <h1>Checking Your Location...</h1>
-    <div class="spinner"></div>
+    <div class="spinner" id="spinner"></div>
+    <div class="error-icon" id="errorIcon">❌</div>
     <div id="status">Please allow location access to mark attendance.</div>
   </div>
 
@@ -90,17 +118,29 @@
       const dist = getDistance(userLat, userLng, allowedLat, allowedLng);
 
       if (dist <= allowedDistance) {
-        document.getElementById("status").innerText = "Location verified ✅ Redirecting to attendance form...";
+        document.getElementById("status").innerText = "✅ Location verified! Redirecting to attendance form...";
         setTimeout(() => {
           window.location.href = formURL;
         }, 2000);
       } else {
-        document.getElementById("status").innerText = "⚠️ You're not within the allowed classroom location.";
+        triggerError("⚠️ You're not within the allowed location range.");
       }
     }
 
     function error(err) {
-      document.getElementById("status").innerText = "❌ Location access denied. Please enable location and refresh the page.";
+      triggerError("❌ Location access denied. Please enable location and refresh.");
+    }
+
+    function triggerError(message) {
+      const card = document.getElementById("card");
+      const spinner = document.getElementById("spinner");
+      const errorIcon = document.getElementById("errorIcon");
+      const status = document.getElementById("status");
+
+      spinner.style.display = "none";
+      errorIcon.style.display = "block";
+      card.classList.add("error");
+      status.innerText = message;
     }
 
     navigator.geolocation.getCurrentPosition(success, error);
