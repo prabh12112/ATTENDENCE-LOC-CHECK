@@ -22,7 +22,7 @@
     main::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%); z-index: -1; }
     form { background-color: rgba(0,0,0,0.6); padding: 2rem; border-radius: 12px; max-width: 600px; width: 100%; margin: 2rem auto; box-shadow: 0 0 20px rgba(0,0,0,0.4); text-align: left; }
     label { display: block; margin: 1rem 0 0.5rem; }
-    select, input[type="text"], input[type="checkbox"], input[type="password"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
+    select, input[type="text"], input[type="checkbox"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
     input[readonly] { background-color: #333; }
     button { margin-top: 1rem; width: 100%; padding: 0.8rem; border: none; border-radius: 8px; background-color: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; }
     button:hover { background-color: #03a9f4; }
@@ -62,24 +62,6 @@
     <label><input type="checkbox" id="confirm" required> I confirm that I am present.</label>
     <button type="submit">Submit Attendance</button>
   </form>
-
-  <!-- Admin Login -->
-  <div style="margin-top: 2rem;">
-    <button onclick="document.getElementById('adminLogin').classList.toggle('hidden')">Admin Login</button>
-    <div id="adminLogin" class="hidden">
-      <input type="text" id="adminUser" placeholder="Username">
-      <input type="password" id="adminPass" placeholder="Password">
-      <button onclick="verifyAdmin()">Login as Admin</button>
-    </div>
-  </div>
-
-  <!-- Hidden Admin Panel -->
-  <section id="adminPanel" class="hidden" style="margin-top: 2rem;">
-    <h3>🔒 Admin Panel</h3>
-    <input type="text" id="newCode" maxlength="3" placeholder="New 3-char Code">
-    <button onclick="updateCode()">Update Code</button>
-    <p id="adminStatus" style="color: lightgreen;"></p>
-  </section>
 </main>
 <footer>
   <div class="footer-content">
@@ -91,59 +73,36 @@
   <div class="footer-divider"></div>
   <div class="footer-bottom">© 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)</div>
 </footer>
-
 <script>
   const rollToName = {
-    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", // etc.
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR",
   };
-  const ADMIN_USERNAME = "admin";
-  const ADMIN_PASSWORD = "Prabh@77102";
-  let todayCode = "";
 
+  const codeMap = {
+    "2025-07-27": "A1B",
+    "2025-07-28": "92X",
+    "2025-07-29": "Q3D",
+    "2025-07-30": "M8N",
+    "2025-07-31": "Z7L",
+    "2025-08-01": "P5E",
+    "2025-08-02": "C2H",
+    "2025-08-03": "L1V",
+    "2025-08-04": "F9R",
+    "2025-08-05": "G6T"
+  };
+
+  function getTodayDateString() {
+    const today = new Date();
+    today.setHours(today.getHours() + 5.5); // IST adjustment
+    return today.toISOString().split("T")[0];
+  }
+
+  let todayCode = codeMap[getTodayDateString()] || "";
   function disableFields(disabled) {
     document.getElementById('roll').disabled = disabled;
     document.getElementById('name').disabled = disabled;
     document.getElementById('confirm').disabled = disabled;
     document.querySelector('button[type="submit"]').disabled = disabled;
-  }
-
-  function verifyAdmin() {
-    const user = document.getElementById('adminUser').value.trim();
-    const pass = document.getElementById('adminPass').value.trim();
-    const panel = document.getElementById('adminPanel');
-    if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
-      panel.classList.remove('hidden');
-      document.getElementById('adminLogin').classList.add('hidden');
-    } else {
-      alert("Invalid admin credentials!");
-    }
-  }
-
-  function updateCode() {
-    const newCode = document.getElementById('newCode').value.trim().toUpperCase();
-    const status = document.getElementById('adminStatus');
-    if (newCode.length !== 3 || !/^[A-Z0-9]+$/.test(newCode)) {
-      status.style.color = "orange";
-      status.textContent = "Code must be 3 letters/numbers.";
-      return;
-    }
-    fetch("https://script.google.com/macros/s/AKfycbwoGxLlp2a0pOPsBPCDZvXTESP7votu96ItqlGPwDx1I9ZHSnjr7WfwWpIH8a4DUxP5/exec", {
-      method: "POST",
-      body: JSON.stringify({ code: newCode }),
-      headers: { "Content-Type": "application/json" }
-    })
-      .then(res => res.text())
-      .then(response => {
-        todayCode = newCode;
-        document.getElementById('code').value = newCode;
-        disableFields(false);
-        status.style.color = "lightgreen";
-        status.textContent = "Code updated successfully.";
-      })
-      .catch(err => {
-        status.style.color = "red";
-        status.textContent = "Failed to update code.";
-      });
   }
 
   window.onload = function () {
@@ -164,12 +123,7 @@
       document.getElementById('name').value = rollToName[e.target.value] || '';
     });
 
-    fetch("https://script.google.com/macros/s/AKfycbwoGxLlp2a0pOPsBPCDZvXTESP7votu96ItqlGPwDx1I9ZHSnjr7WfwWpIH8a4DUxP5/exec")
-      .then(res => res.text())
-      .then(code => {
-        todayCode = code.trim();
-        disableFields(true);
-      });
+    disableFields(true);
 
     document.getElementById('attendanceForm').addEventListener('submit', function (e) {
       e.preventDefault();
