@@ -232,6 +232,28 @@
       h2 { font-size: 1.2rem; }
       p { font-size: 0.95rem; }
       #map { height: 250px; }
+
+      main {
+        padding: 1rem;
+        min-height: auto;
+      }
+
+      footer {
+        padding: 1.5rem 1rem;
+      }
+
+      .footer-content {
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-divider {
+        margin: 0.5rem 0;
+      }
+
+      .footer-bottom {
+        margin-top: 0.5rem;
+      }
     }
 
     @keyframes typewriter {
@@ -290,7 +312,6 @@
       </div>
     </div>
 
-    <!-- Divider between footer content and bottom -->
     <div class="footer-divider"></div>
 
     <div class="footer-bottom">
@@ -302,7 +323,7 @@
   <script>
     const requiredLat = 31.3494154;
     const requiredLng = 75.5573411;
-    const radius = 0.05; // 50 meters
+    const radius = 0.05;
 
     function getDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -357,7 +378,6 @@
       }
     );
 
-    // Handle preloader + animation start
     window.onload = function () {
       setTimeout(() => {
         document.getElementById('preloader').classList.add('fade-out');
