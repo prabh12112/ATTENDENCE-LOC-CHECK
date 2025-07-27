@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Location Check - DAV College</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     :root {
       --bg-color: #ffffff;
@@ -76,7 +77,7 @@
 
     main::before {
       content: "";
-      background-image: url('python-blog-image.jpg'); /* Make sure this image is uploaded to GitHub repo */
+      background-image: url('python-blog-image.jpg');
       background-size: cover;
       background-position: center;
       position: absolute;
@@ -107,20 +108,32 @@
       margin-top: 1rem;
       padding: 0.8rem 1.2rem;
       border-radius: 8px;
-      background-color: rgba(255, 255, 255, 0.1);
       font-weight: bold;
       font-size: 1.1rem;
+    }
+
+    .error {
+      color: #f44336;
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
     }
 
     footer {
       background-color: var(--bg-color);
       text-align: center;
       padding: 1rem;
-      font-size: 1rem;
+      font-size: 1.1rem;
       color: var(--text-color);
+      font-family: 'Montserrat', sans-serif;
       border-top: 1px solid #ccc;
-      position: sticky;
-      bottom: 0;
+      margin-top: auto;
     }
 
     @media (max-width: 600px) {
@@ -152,12 +165,13 @@
     Credits: Prabhsimranjot Singh, BCA (FCA-1)
   </footer>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const requiredLat = 31.3260;
     const requiredLng = 75.5762;
-    const radius = 0.2; // in km
+    const radius = 0.2; // km
 
-    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    function getDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -169,57 +183,49 @@
       return R * c;
     }
 
-    function initMap(lat, lng, isInside) {
-      const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat, lng },
-        zoom: 16
-      });
-
-      new google.maps.Marker({
-        position: { lat, lng },
-        map,
-        title: "Your Location"
-      });
-
-      new google.maps.Circle({
-        strokeColor: "#00bcd4",
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: "#00bcd4",
-        fillOpacity: 0.15,
-        map,
-        center: { lat: requiredLat, lng: requiredLng },
-        radius: radius * 1000
-      });
-    }
-
     function updateStatus(isInside) {
       const status = document.getElementById("status");
       if (isInside) {
         status.textContent = "✅ You are at the required location.";
         status.style.color = "#4caf50";
+        status.classList.remove("error");
       } else {
         status.textContent = "❌ You are not at the required location!";
-        status.style.color = "#f44336";
-        status.style.animation = "shake 0.4s";
+        status.classList.add("error");
       }
+    }
+
+    function showMap(lat, lng, isInside) {
+      const map = L.map('map').setView([lat, lng], 17);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.marker([lat, lng]).addTo(map)
+        .bindPopup("You are here").openPopup();
+
+      L.circle([requiredLat, requiredLng], {
+        color: '#1e90ff',
+        fillColor: '#1e90ff',
+        fillOpacity: 0.1,
+        radius: radius * 1000
+      }).addTo(map);
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const distance = getDistanceFromLatLonInKm(latitude, longitude, requiredLat, requiredLng);
+        const distance = getDistance(latitude, longitude, requiredLat, requiredLng);
         const isInside = distance <= radius;
-        initMap(latitude, longitude, isInside);
         updateStatus(isInside);
+        showMap(latitude, longitude, isInside);
       },
-      (error) => {
-        document.getElementById("status").textContent = "Error getting location.";
+      () => {
+        const status = document.getElementById("status");
+        status.textContent = "❌ Error getting location.";
+        status.classList.add("error");
       }
     );
   </script>
-
-  <!-- Google Maps API (replace YOUR_API_KEY with a real one if needed) -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
 </body>
 </html>
