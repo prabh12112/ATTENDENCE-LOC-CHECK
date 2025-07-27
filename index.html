@@ -3,193 +3,192 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Attendance Location Check</title>
+  <title>Location-Based Attendance</title>
   <style>
     :root {
-      --bg-light: #f0f0f0;
-      --bg-dark: #111;
-      --text-light: #fff;
-      --text-dark: #111;
-      --accent: #4caf50;
-      --error: #ff4f4f;
-    }
-
-    html {
-      scroll-behavior: smooth;
+      color-scheme: light dark;
     }
 
     body {
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-light);
-      color: var(--text-dark);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      scroll-behavior: smooth;
     }
 
-    @media (prefers-color-scheme: dark) {
-      body {
-        background-color: var(--bg-dark);
-        color: var(--text-light);
-      }
+    header {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #fff;
+      border-bottom: 1px solid #ccc;
     }
 
     .logo-container {
+      background-color: white;
+      border-radius: 8px;
+      border: 1px solid #fff;
+      padding: 5px;
+    }
+
+    header img {
+      height: 50px;
+      display: block;
+    }
+
+    .college-name {
+      margin-left: 15px;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #000;
+    }
+
+    main {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
+      padding: 2rem;
+      min-height: 70vh;
       text-align: center;
     }
 
-    .college-logo {
-      width: 100px;
-      height: auto;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .college-logo {
-        outline: 1px solid white;
-        outline-offset: 2px;
-        background-color: #111;
-        padding: 2px;
-      }
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      margin: 0;
-    }
-
-    .status {
-      margin-top: 2rem;
-      padding: 1rem 1.5rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      background-color: var(--accent);
-      color: white;
-      display: none;
-      max-width: 90%;
-      text-align: center;
+    #status {
+      margin-top: 1rem;
+      font-size: 1.2rem;
     }
 
     .error {
-      background-color: var(--error);
-      animation: shake 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .error::before {
-      content: "❌";
-      margin-right: 0.5rem;
+      color: red;
+      font-weight: bold;
+      animation: shake 0.4s;
+      background-color: #2b0000;
+      border-radius: 10px;
+      padding: 10px 20px;
+      border: 1px solid red;
+      display: inline-block;
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+      100% { transform: translateX(0); }
     }
 
     footer {
-      margin-top: 3rem;
-      font-size: 0.9rem;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #222;
+      color: white;
       text-align: center;
-      padding-bottom: 2rem;
+      padding: 10px;
+      font-size: 1.1rem;
     }
 
-    @media screen and (min-width: 600px) {
+    @media (prefers-color-scheme: light) {
+      body {
+        background-color: #ffffff;
+        color: #000;
+      }
+
+      header {
+        background-color: #ffffff;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .college-name {
+        color: #000;
+      }
+
       .logo-container {
-        flex-direction: row;
+        border-color: #000;
       }
 
-      .status {
-        font-size: 1.2rem;
-        max-width: 600px;
+      footer {
+        background-color: #f1f1f1;
+        color: #000;
       }
 
-      h1 {
-        font-size: 2rem;
+      .error {
+        background-color: #ffdddd;
+        border-color: #cc0000;
+        color: #cc0000;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .college-name {
+        font-size: 1.1rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="logo-container">
-    <img src="logo-512x512-1.png" alt="DAV College Logo" class="college-logo" />
-    <h1>Attendance Location Verification</h1>
-  </div>
+  <header>
+    <div class="logo-container">
+      <img src="logo-512x512-1.png" alt="DAV College Logo" />
+    </div>
+    <div class="college-name">DAV College Jalandhar</div>
+  </header>
 
-  <div id="status" class="status"></div>
+  <main>
+    <h1>Attendance Access Portal</h1>
+    <p>Checking your location...</p>
+    <div id="status">🔄 Checking proximity...</div>
+  </main>
 
   <footer>
-    <p>Developed by <strong>Prabhsimranjot Singh</strong>, Class - BCA (FCA-1)</p>
+    Credits: Prabhsimranjot Singh, Class - BCA (FCA-1)
   </footer>
 
   <script>
-    const CLASS_LAT = 31.3494833;
-    const CLASS_LNG = 75.5573274;
-    const ALLOWED_RADIUS = 100;
-    const GOOGLE_FORM_URL = "https://forms.gle/WLSmzCcAY48hpAjbA";
-
-    const statusDiv = document.getElementById("status");
-
-    function showStatus(message, isError = false) {
-      statusDiv.textContent = message;
-      statusDiv.classList.remove("error");
-      statusDiv.style.display = "block";
-      if (isError) {
-        statusDiv.classList.add("error");
-      }
-    }
+    const allowedLat = 31.3494833;
+    const allowedLng = 75.5573274;
+    const maxDistance = 100; // in meters
+    const redirectURL = "https://forms.gle/WLSmzCcAY48hpAjbA";
 
     function getDistance(lat1, lon1, lat2, lon2) {
+      function toRad(x) {
+        return x * Math.PI / 180;
+      }
       const R = 6371e3;
-      const φ1 = lat1 * Math.PI / 180;
-      const φ2 = lat2 * Math.PI / 180;
-      const Δφ = (lat2 - lat1) * Math.PI / 180;
-      const Δλ = (lon2 - lon1) * Math.PI / 180;
-
-      const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+      const φ1 = toRad(lat1);
+      const φ2 = toRad(lat2);
+      const Δφ = toRad(lat2 - lat1);
+      const Δλ = toRad(lon2 - lon1);
+      const a = Math.sin(Δφ / 2) ** 2 +
                 Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ/2) * Math.sin(Δλ/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
+                Math.sin(Δλ / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     }
 
-    function verifyLocation(position) {
-      const userLat = position.coords.latitude;
-      const userLng = position.coords.longitude;
-
-      const distance = getDistance(userLat, userLng, CLASS_LAT, CLASS_LNG);
-
-      if (distance <= ALLOWED_RADIUS) {
-        showStatus("Location verified. Redirecting to attendance form...");
-        setTimeout(() => window.location.href = GOOGLE_FORM_URL, 2000);
-      } else {
-        showStatus("You are not within the allowed range of the class location.", true);
-      }
+    function showError(message) {
+      const statusDiv = document.getElementById("status");
+      statusDiv.innerHTML = `❌ <span class="error">${message}</span>`;
     }
 
-    function showError() {
-      showStatus("Failed to get location permission. Please enable location services.", true);
-    }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const userLat = pos.coords.latitude;
+        const userLng = pos.coords.longitude;
+        const distance = getDistance(userLat, userLng, allowedLat, allowedLng);
 
-    window.onload = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(verifyLocation, showError);
-      } else {
-        showStatus("Geolocation is not supported by this browser.", true);
+        if (distance <= maxDistance) {
+          document.getElementById("status").innerText = "✅ Location verified. Redirecting...";
+          setTimeout(() => window.location.href = redirectURL, 1500);
+        } else {
+          showError("You are not within 100 meters of the classroom.");
+        }
+      },
+      err => {
+        showError("Location access denied or unavailable.");
       }
-    };
+    );
   </script>
 </body>
 </html>
