@@ -40,12 +40,14 @@
 </head>
 <body oncontextmenu="return false">
 <div id="preloader"><div class="spinner"></div></div>
+
 <header>
   <div class="logo-container">
     <img src="logo-512x512-1.png" alt="DAV Logo">
   </div>
   <h1>D.A.V. College Jalandhar</h1>
 </header>
+
 <main id="main-content">
   <form id="attendanceForm">
     <h2>Attendance Form</h2>
@@ -62,25 +64,8 @@
     <label><input type="checkbox" id="confirm" required> I confirm that I am present.</label>
     <button type="submit">Submit Attendance</button>
   </form>
-
-  <!-- Admin Login -->
-  <div style="margin-top: 2rem;">
-    <button onclick="document.getElementById('adminLogin').classList.toggle('hidden')">Admin Login</button>
-    <div id="adminLogin" class="hidden">
-      <input type="text" id="adminUser" placeholder="Username">
-      <input type="password" id="adminPass" placeholder="Password">
-      <button onclick="verifyAdmin()">Login as Admin</button>
-    </div>
-  </div>
-
-  <!-- Hidden Admin Panel -->
-  <section id="adminPanel" class="hidden" style="margin-top: 2rem;">
-    <h3>🔒 Admin Panel</h3>
-    <input type="text" id="newCode" maxlength="3" placeholder="New 3-char Code">
-    <button onclick="updateCode()">Update Code</button>
-    <p id="adminStatus" style="color: lightgreen;"></p>
-  </section>
 </main>
+
 <footer>
   <div class="footer-content">
     <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="#">Attendance Policy</a></li></ul></div>
@@ -96,8 +81,6 @@
   const rollToName = {
     "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", // etc.
   };
-  const ADMIN_USERNAME = "admin";
-  const ADMIN_PASSWORD = "Prabh@77102";
   let todayCode = "";
 
   function disableFields(disabled) {
@@ -105,45 +88,6 @@
     document.getElementById('name').disabled = disabled;
     document.getElementById('confirm').disabled = disabled;
     document.querySelector('button[type="submit"]').disabled = disabled;
-  }
-
-  function verifyAdmin() {
-    const user = document.getElementById('adminUser').value.trim();
-    const pass = document.getElementById('adminPass').value.trim();
-    const panel = document.getElementById('adminPanel');
-    if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
-      panel.classList.remove('hidden');
-      document.getElementById('adminLogin').classList.add('hidden');
-    } else {
-      alert("Invalid admin credentials!");
-    }
-  }
-
-  function updateCode() {
-    const newCode = document.getElementById('newCode').value.trim().toUpperCase();
-    const status = document.getElementById('adminStatus');
-    if (newCode.length !== 3 || !/^[A-Z0-9]+$/.test(newCode)) {
-      status.style.color = "orange";
-      status.textContent = "Code must be 3 letters/numbers.";
-      return;
-    }
-    fetch("https://script.google.com/macros/s/AKfycbwoGxLlp2a0pOPsBPCDZvXTESP7votu96ItqlGPwDx1I9ZHSnjr7WfwWpIH8a4DUxP5/exec", {
-      method: "POST",
-      body: JSON.stringify({ code: newCode }),
-      headers: { "Content-Type": "application/json" }
-    })
-      .then(res => res.text())
-      .then(response => {
-        todayCode = newCode;
-        document.getElementById('code').value = newCode;
-        disableFields(false);
-        status.style.color = "lightgreen";
-        status.textContent = "Code updated successfully.";
-      })
-      .catch(err => {
-        status.style.color = "red";
-        status.textContent = "Failed to update code.";
-      });
   }
 
   window.onload = function () {
@@ -192,7 +136,7 @@
     });
 
     document.getElementById('code').addEventListener('input', function () {
-      const inputCode = this.value.trim();
+      const inputCode = this.value.trim().toUpperCase();
       if (inputCode === todayCode) {
         document.getElementById('codeError').classList.add('hidden');
         disableFields(false);
