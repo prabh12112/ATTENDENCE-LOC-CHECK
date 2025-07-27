@@ -126,7 +126,6 @@
       margin-bottom: 1rem;
       overflow: hidden;
       white-space: nowrap;
-      border-right: 2px solid #4fc3f7;
       width: 0;
       animation: typewriter 1s steps(20) forwards 1.6s, fadeInLeft 1s ease forwards 1.6s;
     }
@@ -192,13 +191,6 @@
       text-align: left;
     }
 
-    .footer-divider {
-      height: 1px;
-      background-color: #333;
-      margin: 1rem 0;
-      opacity: 0.6;
-    }
-
     .footer-section h4 {
       font-size: 0.9rem;
       margin-bottom: 0.5rem;
@@ -218,6 +210,13 @@
       color: #ccc;
       text-decoration: none;
       font-size: 0.8rem;
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: #444;
+      margin: 1rem 0;
+      opacity: 0.4;
     }
 
     .footer-bottom {
@@ -348,7 +347,7 @@
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      L.marker([lat, lng]).addTo(map); // No popup
+      L.marker([lat, lng]).addTo(map); // Removed popup
     }
 
     navigator.geolocation.getCurrentPosition(
@@ -375,6 +374,7 @@
       }
     );
 
+    // Handle preloader + animation start
     window.onload = function () {
       setTimeout(() => {
         document.getElementById('preloader').classList.add('fade-out');
