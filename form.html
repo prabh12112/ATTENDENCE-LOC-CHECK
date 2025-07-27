@@ -7,34 +7,94 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
-    body { background: url('images/background.jpg') no-repeat center center fixed; background-size: cover; min-height: 100vh; color: white; }
-    header { text-align: center; padding: 20px 0; background-color: rgba(0, 0, 0, 0.8); }
+    body {
+      background: url('images/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      color: #fff;
+    }
+    header {
+      text-align: center;
+      padding: 20px 0;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
     .logo-container img { width: 60px; height: 60px; }
     h1 { font-size: 1.8rem; margin-top: 10px; color: #fff; }
-    main { max-width: 400px; margin: 20px auto; background: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    main {
+      max-width: 400px;
+      margin: 20px auto;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
     form { display: flex; flex-direction: column; }
     h2 { text-align: center; margin-bottom: 20px; color: #fff; }
-    label { margin-top: 10px; color: #ddd; }
-    input, select { padding: 8px; margin-top: 5px; border: 1px solid #555; border-radius: 5px; background: #222; color: #fff; }
+    label { margin-top: 10px; color: #fff; }
+    input, select {
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #666;
+      border-radius: 5px;
+      background-color: #222;
+      color: #fff;
+    }
     input[readonly] { background: #333; }
-    button { margin-top: 20px; padding: 10px; border: none; background: #2d89e5; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; }
-    button:disabled { background: #888; }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      border: none;
+      background: #2d89e5;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:disabled { background: #555; }
     .error { color: red; font-size: 0.9rem; margin-top: 5px; }
     .hidden { display: none; }
-    #preloader { position: fixed; width: 100%; height: 100%; background: black; top: 0; left: 0; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-    .spinner { width: 40px; height: 40px; border: 4px solid #444; border-top-color: #2d89e5; border-radius: 50%; animation: spin 1s linear infinite; }
-    footer { text-align: center; padding: 15px; background-color: rgba(0, 0, 0, 0.8); font-size: 0.9rem; color: #ccc; }
+    #preloader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: black;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ccc;
+      border-top-color: #2d89e5;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .fade-out { opacity: 0; visibility: hidden; transition: opacity 0.6s ease-out; }
+    .visible { opacity: 1; transition: opacity 0.5s ease-in; }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.7);
+      font-size: 0.9rem;
+      color: #ccc;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body oncontextmenu="return false">
 <div id="preloader"><div class="spinner"></div></div>
+
 <header>
   <div class="logo-container">
     <img src="images/logo-512x512-1.png" alt="DAV Logo">
   </div>
   <h1>D.A.V. College Jalandhar</h1>
 </header>
+
 <main id="main-content">
   <form id="attendanceForm">
     <h2>Attendance Form</h2>
@@ -52,9 +112,11 @@
     <button type="submit">Submit Attendance</button>
   </form>
 </main>
+
 <footer>
   &copy; 2025 D.A.V. College Jalandhar | All rights reserved.
 </footer>
+
 <script>
   const rollToName = {
     "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR",
@@ -65,12 +127,20 @@
     "2025-07-28": "92X",
     "2025-07-29": "Q3D",
     "2025-07-30": "M8N",
-    "2025-07-31": "Z7L"
+    "2025-07-31": "Z7L",
+    "2025-08-01": "P5E",
+    "2025-08-02": "C2H",
+    "2025-08-03": "L1V",
+    "2025-08-04": "F9R",
+    "2025-08-05": "G6T"
   };
+
+  const SUPABASE_URL = "https://xpyaqzdjkhminfvjwhka.supabase.co";
+  const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhweWFxemRqa2htaW5mdmp3aGthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2MzM0NjAsImV4cCI6MjA2OTIwOTQ2MH0.ba-5wNo8rYUw5PY48yw3bc7yVaGJjDWMlyX-Ycr-g8k";
 
   function getTodayDateString() {
     const today = new Date();
-    today.setHours(today.getHours() + 5.5); // IST offset
+    today.setHours(today.getHours() + 5.5);
     return today.toISOString().split("T")[0];
   }
 
@@ -84,8 +154,13 @@
   }
 
   window.onload = function () {
+    // Fix preloader fade-out
     setTimeout(() => {
-      document.getElementById('preloader').classList.add('hidden');
+      const preloader = document.getElementById('preloader');
+      preloader.classList.add('fade-out');
+      setTimeout(() => {
+        preloader.style.display = 'none';
+      }, 600);
     }, 1200);
 
     const rollDropdown = document.getElementById('roll');
@@ -104,7 +179,6 @@
 
     document.getElementById('attendanceForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-
       const now = new Date();
       const ISTTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
       const hour = ISTTime.getHours();
@@ -119,15 +193,28 @@
         document.getElementById('codeError').classList.remove('hidden');
         return;
       }
-
       document.getElementById('codeError').classList.add('hidden');
 
       const roll = document.getElementById('roll').value;
       const name = document.getElementById('name').value;
       const timestamp = ISTTime.toLocaleString("en-IN");
 
-      // At this point, data is available and could be stored with any backend like Supabase, if integrated
-      alert("Attendance recorded for " + name + " at " + timestamp);
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/attendance`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_API_KEY,
+            'Authorization': `Bearer ${SUPABASE_API_KEY}`
+          },
+          body: JSON.stringify({ roll, name, timestamp })
+        });
+
+        if (!response.ok) throw new Error("Failed to record attendance");
+        alert("Attendance submitted successfully.");
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
     });
 
     document.getElementById('code').addEventListener('input', function () {
