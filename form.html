@@ -93,7 +93,7 @@
 
   function getTodayDateString() {
     const today = new Date();
-    today.setHours(today.getHours() + 5.5); // IST adjustment
+    today.setHours(today.getHours() + 5.5);
     return today.toISOString().split("T")[0];
   }
 
@@ -142,6 +142,14 @@
         return;
       }
       document.getElementById('codeError').classList.add('hidden');
+
+      const roll = document.getElementById('roll').value;
+      const name = document.getElementById('name').value;
+      const timestamp = ISTTime.toLocaleString("en-IN");
+
+      const mailto = `mailto:bca25.28.dav@gmail.com?subject=Attendance Submission&body=Roll: ${roll}%0AName: ${name}%0ATime: ${timestamp}`;
+      window.open(mailto);
+
       alert("Attendance submitted successfully.");
     });
 
