@@ -8,7 +8,7 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
     body { background-color: #121212; color: #ffffff; overflow-x: hidden; }
-    #preloader { position: fixed; top: 0; left:  0; width: 100%; height: 100%; background: #121212; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: all 0.5s ease; }
+    #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: all 0.5s ease; }
     #preloader.fade-out { opacity: 0; transform: scale(0); pointer-events: none; }
     .spinner { border: 4px solid #ccc; border-top: 4px solid rgba(30, 144, 255, 0.5); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
@@ -22,7 +22,7 @@
     main::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%); z-index: -1; }
     form { background-color: rgba(0,0,0,0.6); padding: 2rem; border-radius: 12px; max-width: 600px; width: 100%; margin: 2rem auto; box-shadow: 0 0 20px rgba(0,0,0,0.4); text-align: left; }
     label { display: block; margin: 1rem 0 0.5rem; }
-    select, input[type="text"], input[type="checkbox"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
+    select, input[type="text"], input[type="checkbox"], input[type="password"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
     input[readonly] { background-color: #333; }
     button { margin-top: 1rem; width: 100%; padding: 0.8rem; border: none; border-radius: 8px; background-color: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; }
     button:hover { background-color: #03a9f4; }
@@ -42,9 +42,7 @@
 <div id="preloader"><div class="spinner"></div></div>
 
 <header>
-  <div class="logo-container">
-    <img src="logo-512x512-1.png" alt="DAV Logo">
-  </div>
+  <div class="logo-container"><img src="logo-512x512-1.png" alt="DAV Logo"></div>
   <h1>D.A.V. College Jalandhar</h1>
 </header>
 
@@ -79,20 +77,15 @@
 
 <script>
   const rollToName = {
-    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "tushar", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", "51": "KUNAL BHAGAT", "52": "JATIN GILHOTRA", "53": "LAKSH KALIA", "54": "LAKSHAY JOSHI", "55": "MAANSHU DUBEY", "56": "PREET LOI", "57": "KARAN SINGH", "58": "VIBHOR JAIN", "59": "UTKARSHA RAJ SINGH", "60": "MEHAK", "61": "NIKHIL",// extend as needed
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR"
+    // Add more roll numbers as needed
   };
 
-  const securityCodes = {
+  const codeSchedule = {
     "2025-07-27": "ABC",
-    "2025-07-28": "DEF",
-    "2025-07-29": "GHI",
-    "2025-07-30": "JKL",
-    "2025-07-31": "MNO",
-    "2025-08-01": "PQR",
-    "2025-08-02": "STU",
-    "2025-08-03": "VWX",
-    "2025-08-04": "YZA",
-    "2025-08-05": "BCD"
+    "2025-07-28": "XYZ",
+    "2025-07-29": "PQR"
+    // Add up to 10 days in YYYY-MM-DD format
   };
 
   let todayCode = "";
@@ -122,15 +115,20 @@
       document.getElementById('name').value = rollToName[e.target.value] || '';
     });
 
-    const IST = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-    todayCode = securityCodes[IST] || "";
+    const today = new Date().toISOString().split("T")[0];
+    todayCode = codeSchedule[today] || "";
+    disableFields(true);
 
-    if (!todayCode) {
-      alert("No attendance code set for today.");
-      disableFields(true);
-    } else {
-      disableFields(true);
-    }
+    document.getElementById('code').addEventListener('input', function () {
+      const inputCode = this.value.trim().toUpperCase();
+      if (inputCode === todayCode) {
+        document.getElementById('codeError').classList.add('hidden');
+        disableFields(false);
+      } else {
+        disableFields(true);
+        document.getElementById('codeError').classList.remove('hidden');
+      }
+    });
 
     document.getElementById('attendanceForm').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -148,19 +146,26 @@
         document.getElementById('codeError').classList.remove('hidden');
         return;
       }
-      document.getElementById('codeError').classList.add('hidden');
-      alert("Attendance submitted successfully.");
-    });
 
-    document.getElementById('code').addEventListener('input', function () {
-      const inputCode = this.value.trim().toUpperCase();
-      if (inputCode === todayCode) {
-        document.getElementById('codeError').classList.add('hidden');
-        disableFields(false);
-      } else {
+      const roll = document.getElementById('roll').value;
+      const name = document.getElementById('name').value;
+
+      fetch("https://script.google.com/macros/s/AKfycbxSVOE1_zV-N_fFAi6U1i-cRD6zObrb_1MlFsbNkJd-ps8xCzq7-OcNZBPJKaymNk-rNg/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roll, name })
+      })
+      .then(res => res.text())
+      .then(response => {
+        alert("Attendance submitted successfully.");
+        document.getElementById('attendanceForm').reset();
+        document.getElementById('name').value = "";
         disableFields(true);
-        document.getElementById('codeError').classList.remove('hidden');
-      }
+      })
+      .catch(err => {
+        alert("Failed to submit attendance.");
+        console.error(err);
+      });
     });
   };
 </script>
