@@ -4,176 +4,120 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Attendance Form</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* (Same styles as before, unchanged for brevity) */
-    /* Add any specific style adjustments below if needed */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+    body { background-color: #121212; color: #ffffff; overflow-x: hidden; }
+    #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: all 0.5s ease; }
+    #preloader.fade-out { opacity: 0; transform: scale(0); pointer-events: none; }
+    .spinner { border: 4px solid #ccc; border-top: 4px solid rgba(30, 144, 255, 0.5); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+    header { display: flex; align-items: center; gap: 1rem; padding: 0.6rem 1.5rem; background-color: #1a1a1a; }
+    .logo-container { background: white; border-radius: 8px; padding: 4px; }
+    .logo-container img { height: 40px; width: auto; }
+    h1 { font-size: 1.2rem; }
+    main { position: relative; z-index: 1; padding: 2rem; text-align: center; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateX(-20px); transition: opacity 1s ease, transform 1s ease; }
+    main.visible { opacity: 1; transform: translateX(0); }
+    main::before { content: ""; background-image: url('python-blog-image.jpg'); background-size: cover; background-position: center; position: absolute; inset: 0; z-index: -2; opacity: 0.25; filter: brightness(0.6); }
+    main::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%); z-index: -1; }
+    form { background-color: rgba(0,0,0,0.6); padding: 2rem; border-radius: 12px; max-width: 600px; width: 100%; margin: 2rem auto; box-shadow: 0 0 20px rgba(0,0,0,0.4); text-align: left; }
+    label { display: block; margin: 1rem 0 0.5rem; }
+    select, input[type="text"], input[type="checkbox"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
+    input[readonly] { background-color: #333; }
+    button { margin-top: 1rem; width: 100%; padding: 0.8rem; border: none; border-radius: 8px; background-color: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; }
+    button:hover { background-color: #03a9f4; }
+    .hidden { display: none; }
+    .error { color: red; font-size: 0.9rem; }
+    footer { background-color: #1a1a1a; color: white; padding: 2rem; text-align: center; }
+    .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin-bottom: 1rem; text-align: left; }
+    .footer-section h4 { font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .footer-section ul { list-style: none; padding: 0; font-size: 0.8rem; }
+    .footer-section li { margin-bottom: 4px; }
+    .footer-section a { color: #ccc; text-decoration: none; font-size: 0.8rem; }
+    .footer-divider { height: 1px; background: #444; margin: 1rem 0; opacity: 0.4; }
+    .footer-bottom { font-size: 0.75rem; text-align: center; margin-top: 1rem; }
   </style>
 </head>
-<body>
-  <header>
-    <div class="logo-container">
-      <img src="logo-512x512-1.png" alt="DAV Logo" />
-    </div>
-    <h1>D.A.V. College Jalandhar</h1>
-  </header>
+<body oncontextmenu="return false">
+<div id="preloader"><div class="spinner"></div></div>
+<header>
+  <div class="logo-container">
+    <img src="logo-512x512-1.png" alt="DAV Logo">
+  </div>
+  <h1>D.A.V. College Jalandhar</h1>
+</header>
+<main id="main-content">
+  <form id="attendanceForm">
+    <h2>Attendance Form</h2>
+    <label for="code">Security Code</label>
+    <input type="text" id="code" maxlength="3" required>
+    <div id="codeError" class="error hidden">Invalid code. Please try again.</div>
 
-  <main>
-    <div class="form-container">
-      <h2>Attendance Form</h2>
-      <form id="attendanceForm">
-        <label for="code">Security Code</label>
-        <input type="text" id="code" maxlength="3" required />
+    <label for="roll">Roll Number</label>
+    <select id="roll" required><option value="">Select Roll Number</option></select>
 
-        <label for="roll">Roll Number</label>
-        <select id="roll" required>
-          <option value="">-- Select Roll Number --</option>
-        </select>
+    <label for="name">Name</label>
+    <input type="text" id="name" readonly required>
 
-        <label for="name">Name</label>
-        <input type="text" id="name" readonly />
+    <label><input type="checkbox" id="confirm" required> I confirm that I am present.</label>
+    <button type="submit">Submit Attendance</button>
+  </form>
+</main>
+<footer>
+  <div class="footer-content">
+    <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="#">Attendance Policy</a></li></ul></div>
+    <div class="footer-section"><h4>Social Media</h4><ul><li><a href="https://www.youtube.com/@nischaybahl7714" target="_blank">YouTube</a></li></ul></div>
+    <div class="footer-section"><h4>Contact</h4><ul><li><a href="mailto:bca25.28.dav@gmail.com">bca25.28.dav@gmail.com</a></li></ul></div>
+    <div class="footer-section"><h4>Address</h4><ul><li>D.A.V. College, Mahatma Hansraj Marg,<br>Jalandhar, Punjab – 144008, India</li></ul></div>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-bottom">© 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)</div>
+</footer>
+<script>
+  const rollToName = {
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "TUSHAR" // extend as needed
+  };
+  const validCode = "123"; // will be updated dynamically
 
-        <label>
-          <input type="checkbox" id="confirm" /> I confirm that I am present
-        </label>
+  window.onload = function () {
+    setTimeout(() => {
+      document.getElementById('preloader').classList.add('fade-out');
+      document.getElementById('main-content').classList.add('visible');
+    }, 1500);
 
-        <button type="submit" disabled>Submit</button>
-        <p id="status" style="margin-top:1rem; color: #f44336;"></p>
-      </form>
-    </div>
-  </main>
-
-  <footer>
-    <!-- Footer unchanged -->
-  </footer>
-
-  <script>
-    const students = {
-      "01": "CHIRAG RANA",
-      "02": "SHARANJIT SINGH",
-      "03": "ANEESH KUMAR",
-      "04": "JATINVEER",
-      "05": "SOHAN KUMAR",
-      "06": "TUSHAR",
-      "07": "VANSH SHARMA",
-      "08": "SAGAR KUMAR MANDAL",
-      "09": "MEHAK",
-      "10": "MANREET KAUR",
-      "11": "ARUSHI",
-      "12": "MANNAT",
-      "13": "SURAJ SINGH",
-      "14": "DIPANKAR",
-      "15": "SNEHA",
-      "16": "NAVJOT KAUR",
-      "17": "ADITYA SHARMA",
-      "18": "ROHAN",
-      "19": "DAMANJEET",
-      "20": "SHIVAM PANDEY",
-      "21": "NITIN",
-      "22": "NIKHIL",
-      "23": "AARUSHI MALHOTRA",
-      "24": "ANKIT KUMAR",
-      "25": "EKAMJEET KAUR KALRA",
-      "26": "SHIVAM",
-      "27": "PRABHSIMRANJOT SINGH",
-      "28": "SUMANT SHARMA",
-      "29": "HARSHIT",
-      "30": "NAMPREET SINGH",
-      "31": "TANUSH",
-      "32": "PARTH AULUCK",
-      "33": "TANISH JAIN",
-      "34": "PALAK BHARDWAJ",
-      "35": "AKASH DEEP",
-      "36": "AYUSH KUMAR",
-      "37": "LAKSH",
-      "38": "JASHAN ARORA",
-      "39": "KRISHAN SINGH",
-      "40": "KULWINDER KAUR",
-      "41": "DAKSH CHAUHAN",
-      "42": "DIWAKAR",
-      "43": "SARUCHI SHARMA",
-      "44": "AMRITPAL SINGH",
-      "45": "GLORY",
-      "46": "SIMRAN",
-      "47": "MANIK",
-      "48": "OM TALWAR",
-      "49": "NITIN KUMARN BASRA",
-      "50": "KHUSHI",
-      "51": "KUNAL BHAGAT",
-      "52": "JATIN GILHOTRA",
-      "53": "LAKSH KALIA",
-      "54": "LAKSHAY JOSHI",
-      "55": "MAANSHU DUBEY",
-      "56": "PREET LOI",
-      "57": "KARAN SINGH",
-      "58": "VIBHOR JAIN",
-      "59": "UTKARSHA RAJ SINGH",
-      "60": "MEHAK",
-      "61": "NIKHIL"
-    };
-
-    const form = document.getElementById("attendanceForm");
-    const codeInput = document.getElementById("code");
-    const rollInput = document.getElementById("roll");
-    const nameInput = document.getElementById("name");
-    const checkbox = document.getElementById("confirm");
-    const submitBtn = form.querySelector("button");
-    const status = document.getElementById("status");
-
-    // Populate dropdown
-    for (const roll in students) {
-      const option = document.createElement("option");
+    const rollDropdown = document.getElementById('roll');
+    Object.keys(rollToName).sort((a,b)=>a-b).forEach(roll => {
+      const option = document.createElement('option');
       option.value = roll;
       option.textContent = roll;
-      rollInput.appendChild(option);
-    }
-
-    function getTodayCode() {
-      const today = new Date();
-      const code = (today.getDate() * 7 + (today.getMonth() + 1)) % 1000;
-      return code.toString().padStart(3, '0');
-    }
-
-    function isWithinTimeWindow() {
-      const now = new Date();
-      const start = new Date(now);
-      const end = new Date(now);
-      start.setHours(13, 30, 0);
-      end.setHours(14, 15, 0);
-      return now >= start && now <= end;
-    }
-
-    function validateForm() {
-      const roll = rollInput.value;
-      const code = codeInput.value.trim();
-      const correctCode = getTodayCode();
-
-      nameInput.value = students[roll] || "";
-
-      const valid = isWithinTimeWindow() && checkbox.checked && code === correctCode && students.hasOwnProperty(roll);
-      submitBtn.disabled = !valid;
-
-      if (!isWithinTimeWindow()) {
-        status.textContent = "Attendance is only open from 1:30 PM to 2:15 PM IST.";
-      } else if (code !== correctCode) {
-        status.textContent = "Invalid security code.";
-      } else if (!students.hasOwnProperty(roll)) {
-        status.textContent = "Invalid roll number.";
-      } else if (!checkbox.checked) {
-        status.textContent = "Please confirm your presence.";
-      } else {
-        status.textContent = "";
-      }
-    }
-
-    codeInput.addEventListener("input", validateForm);
-    rollInput.addEventListener("change", validateForm);
-    checkbox.addEventListener("change", validateForm);
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      alert("Attendance submitted for: " + rollInput.value);
+      rollDropdown.appendChild(option);
     });
-  </script>
+
+    rollDropdown.addEventListener('change', e => {
+      document.getElementById('name').value = rollToName[e.target.value] || '';
+    });
+
+    document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const now = new Date();
+      const ISTTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+      const hour = ISTTime.getHours();
+      const minute = ISTTime.getMinutes();
+      if (!(hour === 13 && minute >= 30 || hour === 14 && minute <= 15)) {
+        alert("Form accessible only between 1:30 PM and 2:15 PM IST");
+        return;
+      }
+      const code = document.getElementById('code').value.trim();
+      if (code !== validCode) {
+        document.getElementById('codeError').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('codeError').classList.add('hidden');
+      alert("Attendance submitted successfully.");
+      // TODO: Send attendance via backend email function
+    });
+  };
+</script>
 </body>
 </html>
+
