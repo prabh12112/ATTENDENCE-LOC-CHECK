@@ -3,181 +3,165 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Location-Based Attendance</title>
+  <title>Attendance Location Check</title>
   <style>
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      transition: background-color 0.4s ease, color 0.4s ease;
-    }
-
-    .card {
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      max-width: 90%;
-      transition: transform 0.3s ease, background-color 0.4s ease;
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    #status {
-      font-size: 1.2rem;
-      margin-top: 1rem;
-    }
-
-    .spinner {
-      margin-top: 1rem;
-      width: 40px;
-      height: 40px;
-      border: 4px solid transparent;
-      border-top: 4px solid;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-    }
-
-    .error-icon {
-      font-size: 3rem;
-      display: none;
-      margin-top: 1rem;
-    }
-
-    .error {
-      animation: shake 0.5s;
-    }
-
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      50% { transform: translateX(10px); }
-      75% { transform: translateX(-10px); }
-      100% { transform: translateX(0); }
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    :root {
+      --bg-light: #ffffff;
+      --bg-dark: #121212;
+      --text-light: #ffffff;
+      --text-dark: #000000;
+      --accent: #4fc3f7;
     }
 
     @media (prefers-color-scheme: dark) {
       body {
-        background-color: #0e0e0e;
-        color: #f1f1f1;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
       }
       .card {
-        background-color: #1a1a1a;
-        box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
-      }
-      .spinner {
-        border-top-color: #00f7ff;
-      }
-      .error-icon {
-        color: #ff4d4d;
-      }
-      .error {
-        background-color: #2b0000;
+        background-color: #1e1e1e;
       }
     }
 
     @media (prefers-color-scheme: light) {
       body {
-        background-color: #f2f2f2;
-        color: #111;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
       }
       .card {
-        background-color: #ffffff;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      }
-      .spinner {
-        border-top-color: #007bff;
-      }
-      .error-icon {
-        color: #ff1a1a;
-      }
-      .error {
-        background-color: #ffe6e6;
+        background-color: #f5f5f5;
       }
     }
 
-    @media (max-width: 600px) {
-      h1 { font-size: 1.5rem; }
-      #status { font-size: 1rem; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      scroll-behavior: smooth;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    header {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    header img {
+      width: 120px;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    #loading {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      color: var(--accent);
+    }
+
+    #error {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      color: #ff4c4c;
+      display: none;
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      width: 100%;
+      color: gray;
+    }
+
+    .cross {
+      font-size: 2rem;
+      color: red;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="card" id="card">
-    <h1>Checking Your Location...</h1>
-    <div class="spinner" id="spinner"></div>
-    <div class="error-icon" id="errorIcon">❌</div>
-    <div id="status">Please allow location access to mark attendance.</div>
+  <header>
+    <img src="logo-512x512-1.png" alt="DAV College Logo" />
+    <h2>DAV College - Location Based Attendance</h2>
+  </header>
+
+  <div class="card">
+    <h3>Checking your location...</h3>
+    <div id="loading">Please wait while we verify your location.</div>
+    <div id="error">
+      <div class="cross">✖</div>
+      You're not within the allowed area (100m). Access denied.
+    </div>
   </div>
+
+  <footer>
+    Created by: Prabhsimranjot Singh, BCA (FCA-1)
+  </footer>
 
   <script>
     const allowedLat = 31.3494833;
     const allowedLng = 75.5573274;
-    const allowedDistance = 100; // meters
-    const formURL = "https://forms.gle/WLSmzCcAY48hpAjbA";
+    const allowedDistanceMeters = 100;
+    const formURL = "https://forms.gle/WLSmzCcAY48hpAjbA"; // Change if form changes
 
-    function getDistance(lat1, lon1, lat2, lon2) {
+    function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
       const R = 6371e3;
-      const toRad = x => x * Math.PI / 180;
-      const dLat = toRad(lat2 - lat1);
-      const dLon = toRad(lon2 - lon1);
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const φ1 = lat1 * Math.PI / 180;
+      const φ2 = lat2 * Math.PI / 180;
+      const Δφ = (lat2 - lat1) * Math.PI / 180;
+      const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+      const a = Math.sin(Δφ / 2) ** 2 +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
       return R * c;
     }
 
-    function success(pos) {
-      const userLat = pos.coords.latitude;
-      const userLng = pos.coords.longitude;
-      const dist = getDistance(userLat, userLng, allowedLat, allowedLng);
+    function checkLocation(position) {
+      const userLat = position.coords.latitude;
+      const userLng = position.coords.longitude;
+      const distance = getDistanceFromLatLonInMeters(userLat, userLng, allowedLat, allowedLng);
 
-      if (dist <= allowedDistance) {
-        document.getElementById("status").innerText = "✅ Location verified! Redirecting to attendance form...";
-        setTimeout(() => {
-          window.location.href = formURL;
-        }, 2000);
+      if (distance <= allowedDistanceMeters) {
+        window.location.href = formURL;
       } else {
-        triggerError("⚠️ You're not within the allowed location range.");
+        document.getElementById('loading').style.display = 'none';
+        const errorDiv = document.getElementById('error');
+        errorDiv.style.display = 'block';
       }
     }
 
-    function error(err) {
-      triggerError("❌ Location access denied. Please enable location and refresh.");
+    function showError() {
+      document.getElementById('loading').style.display = 'none';
+      const errorDiv = document.getElementById('error');
+      errorDiv.innerHTML = '<div class="cross">✖</div>Location access failed or blocked.';
+      errorDiv.style.display = 'block';
     }
 
-    function triggerError(message) {
-      const card = document.getElementById("card");
-      const spinner = document.getElementById("spinner");
-      const errorIcon = document.getElementById("errorIcon");
-      const status = document.getElementById("status");
-
-      spinner.style.display = "none";
-      errorIcon.style.display = "block";
-      card.classList.add("error");
-      status.innerText = message;
-    }
-
-    navigator.geolocation.getCurrentPosition(success, error);
+    navigator.geolocation.getCurrentPosition(checkLocation, showError);
   </script>
 </body>
 </html>
