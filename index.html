@@ -13,43 +13,39 @@
       margin: 0;
       padding: 0;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #0e0e0e;
-      color: #f1f1f1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
       text-align: center;
+      transition: background-color 0.4s ease, color 0.4s ease;
     }
 
     .card {
-      background-color: #1a1a1a;
       padding: 2rem;
       border-radius: 16px;
-      box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
       max-width: 90%;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s ease, background-color 0.4s ease;
     }
 
     h1 {
       font-size: 2rem;
       margin-bottom: 1rem;
-      color: #00f7ff;
     }
 
     #status {
       font-size: 1.2rem;
       margin-top: 1rem;
-      color: #ffffff;
     }
 
     .spinner {
       margin-top: 1rem;
       width: 40px;
       height: 40px;
-      border: 4px solid #ffffff30;
-      border-top: 4px solid #00f7ff;
+      border: 4px solid transparent;
+      border-top: 4px solid;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       display: inline-block;
@@ -57,13 +53,11 @@
 
     .error-icon {
       font-size: 3rem;
-      color: #ff4d4d;
       display: none;
       margin-top: 1rem;
     }
 
     .error {
-      background-color: #2b0000;
       animation: shake 0.5s;
     }
 
@@ -78,6 +72,46 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #0e0e0e;
+        color: #f1f1f1;
+      }
+      .card {
+        background-color: #1a1a1a;
+        box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
+      }
+      .spinner {
+        border-top-color: #00f7ff;
+      }
+      .error-icon {
+        color: #ff4d4d;
+      }
+      .error {
+        background-color: #2b0000;
+      }
+    }
+
+    @media (prefers-color-scheme: light) {
+      body {
+        background-color: #f2f2f2;
+        color: #111;
+      }
+      .card {
+        background-color: #ffffff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+      .spinner {
+        border-top-color: #007bff;
+      }
+      .error-icon {
+        color: #ff1a1a;
+      }
+      .error {
+        background-color: #ffe6e6;
+      }
     }
 
     @media (max-width: 600px) {
