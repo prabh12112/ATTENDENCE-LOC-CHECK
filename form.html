@@ -1,1 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
 
+    :root {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --highlight: rgba(30, 144, 255, 0.5);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+    }
+
+    #preloader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #121212;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: all 0.5s ease;
+    }
+
+    #preloader.fade-out {
+      opacity: 0;
+      transform: scale(0);
+      pointer-events: none;
+    }
+
+    .spinner {
+      border: 4px solid #ccc;
+      border-top: 4px solid var(--highlight);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.6rem 1.5rem;
+      background-color: #1a1a1a;
+    }
+
+    .logo-container {
+      background: white;
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .logo-container img {
+      height: 40px;
+      width: auto;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      padding: 2rem;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    main.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    main::before {
+      content: "";
+      background-image: url('python-blog-image.jpg'); /* Replace with your background */
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      opacity: 0.25;
+      filter: brightness(0.6);
+    }
+
+    main::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%);
+      z-index: -1;
+    }
+
+    .content h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeInLeft 1s ease forwards 1.6s;
+    }
+
+    .content p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeInLeft 1s ease forwards 1.8s;
+    }
+
+    footer {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .footer-section h4 {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+      font-size: 0.8rem;
+    }
+
+    .footer-section li {
+      margin-bottom: 4px;
+    }
+
+    .footer-section a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.8rem;
+    }
+
+    .footer-divider {
+      height: 1px;
+      background-color: #444;
+      margin: 1rem 0;
+    }
+
+    .footer-bottom {
+      font-size: 0.75rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.1rem; }
+      .content h2 { font-size: 1.2rem; }
+      .content p { font-size: 0.95rem; }
+
+      main {
+        padding: 1rem;
+        min-height: auto;
+      }
+
+      footer {
+        padding: 1.5rem 1rem;
+      }
+
+      .footer-content {
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-divider {
+        margin: 0.5rem 0;
+      }
+
+      .footer-bottom {
+        margin-top: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+  <div id="preloader"><div class="spinner"></div></div>
+
+  <header>
+    <div class="logo-container">
+      <img src="logo-512x512-1.png" alt="DAV Logo">
+    </div>
+    <h1>D.A.V. College Jalandhar</h1>
+  </header>
+
+  <main id="main-content">
+    <div class="content">
+      <h2>Welcome to the New Page</h2>
+      <p>Add your content here.</p>
+
+      <!-- 🟡 Start adding new elements here -->
+      <p style="opacity: 0; animation: fadeInLeft 1s ease forwards 2s;">
+        This is a new section for custom content. You can add forms, links, or any interactive features here.
+      </p>
+      <!-- 🔚 End custom content -->
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul><li><a href="#">Attendance Policy</a></li></ul>
+      </div>
+      <div class="footer-section">
+        <h4>Social Media</h4>
+        <ul><li><a href="https://www.youtube.com/@nischaybahl7714" target="_blank">YouTube</a></li></ul>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <ul><li><a href="mailto:bca25.28.dav@gmail.com">bca25.28.dav@gmail.com</a></li></ul>
+      </div>
+      <div class="footer-section">
+        <h4>Address</h4>
+        <ul><li>D.A.V. College, Mahatma Hansraj Marg,<br>Jalandhar, Punjab – 144008, India</li></ul>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+    <div class="footer-bottom">
+      © 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)
+    </div>
+  </footer>
+
+  <script>
+    window.onload = function () {
+      setTimeout(() => {
+        document.getElementById('preloader').classList.add('fade-out');
+        document.getElementById('main-content').classList.add('visible');
+      }, 1500);
+    };
+  </script>
+</body>
+</html>
