@@ -3,23 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DAV College - Location Attendance</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet" />
+  <title>DAV Attendance Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    :root {
-      --bg-color: #121212;
-      --text-color: #ffffff;
-      --highlight: #4fc3f7;
-      --accent: rgba(30, 144, 255, 0.4);
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Montserrat', sans-serif;
-      user-select: none;
+    }
+
+    :root {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --highlight: rgba(30, 144, 255, 0.5);
     }
 
     body {
@@ -28,119 +26,166 @@
       overflow-x: hidden;
     }
 
+    /* Preloader */
     #preloader {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: #000;
-      z-index: 9999;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #121212;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 9999;
     }
 
     .spinner {
-      border: 6px solid #444;
-      border-top: 6px solid var(--highlight);
+      border: 4px solid #ccc;
+      border-top: 4px solid var(--highlight);
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 40px; height: 40px;
       animation: spin 1s linear infinite;
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
+      0% { transform: rotate(0); }
       100% { transform: rotate(360deg); }
     }
 
     header {
       display: flex;
       align-items: center;
+      gap: 1rem;
       padding: 1rem 2rem;
+      background-color: #1a1a1a;
     }
 
     .logo-container {
       background: white;
       border-radius: 8px;
       padding: 5px;
-      margin-right: 1rem;
     }
 
     .logo-container img {
       height: 50px;
       width: auto;
-      border-radius: 4px;
     }
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
+      animation: fadeInLeft 0.8s ease forwards;
     }
 
     main {
+      position: relative;
+      z-index: 1;
       padding: 2rem;
       text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    main::before {
+      content: "";
+      background-image: url('python-blog-image.jpg');
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      opacity: 0.25;
+      filter: brightness(0.6);
+    }
+
+    main::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%);
+      z-index: -1;
     }
 
     h2 {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       margin-bottom: 1rem;
+      animation: typewriter 1s steps(20) 0.3s forwards, fadeInLeft 1s ease;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid #4fc3f7;
+      width: 0;
     }
 
     p {
       font-size: 1rem;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
+      animation: fadeInLeft 1.5s ease;
     }
 
     #map {
       width: 100%;
       max-width: 600px;
       height: 300px;
-      margin: 1rem auto;
+      margin: 1rem 0;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      animation: fadeInLeft 1.7s ease;
     }
 
     #status {
-      margin: 1rem auto;
+      margin-top: 1rem;
       font-size: 1.1rem;
       font-weight: bold;
+      animation: fadeInLeft 1.8s ease;
     }
 
-    .continue-btn {
+    a#continue-btn {
       display: inline-block;
-      padding: 0.7rem 1.4rem;
-      margin-top: 1.8rem;
-      background-color: var(--accent);
+      margin-top: 2rem;
+      padding: 0.8rem 2rem;
+      background-color: rgba(30,144,255,0.5);
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 1rem;
       text-decoration: none;
-      transition: background 0.3s;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      animation: fadeInLeft 2s ease;
     }
 
-    .continue-btn:hover {
-      background-color: rgba(30, 144, 255, 0.6);
+    a#continue-btn:hover {
+      background-color: rgba(30,144,255,0.7);
     }
 
     footer {
+      background-color: #1a1a1a;
+      color: white;
       padding: 2rem;
-      background-color: #0f0f0f;
-      color: #ccc;
-      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .footer-content {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 2rem;
+      justify-content: space-around;
+      gap: 1rem;
+      text-align: left;
+      margin-bottom: 1rem;
     }
 
     .footer-section {
       flex: 1;
-      min-width: 150px;
-      text-align: left;
+      min-width: 120px;
+      font-size: 0.8rem;
     }
 
-    .footer-section h3 {
-      font-size: 1rem;
+    .footer-section h4 {
+      font-size: 0.9rem;
       margin-bottom: 0.5rem;
     }
 
@@ -149,178 +194,131 @@
       padding: 0;
     }
 
-    .footer-section li, .footer-section a {
-      color: #bbb;
-      text-decoration: none;
-      font-size: 0.75rem;
+    .footer-section li {
       margin-bottom: 4px;
-      display: block;
     }
 
-    .footer-credits {
-      width: 100%;
+    .footer-section a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.8rem;
+    }
+
+    .footer-bottom {
+      font-size: 0.75rem;
       text-align: center;
-      font-size: 0.7rem;
       margin-top: 1rem;
-      color: #888;
-    }
-
-    @keyframes fadeInLeft {
-      from {
-        opacity: 0;
-        transform: translateX(-40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @keyframes typewriter {
-      0% { width: 0; opacity: 0 }
-      100% { width: 100%; opacity: 1 }
-    }
-
-    .animated {
-      opacity: 0;
-    }
-
-    .show {
-      animation: fadeInLeft 0.6s ease forwards;
     }
 
     @media (max-width: 600px) {
-      h1 { font-size: 1.1rem; }
+      h1 { font-size: 1.2rem; }
       h2 { font-size: 1.2rem; }
+      p { font-size: 0.95rem; }
       #map { height: 250px; }
-      footer { flex-direction: column; gap: 1rem; }
+    }
+
+    @keyframes typewriter {
+      to { width: 100%; }
+    }
+
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
     }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false">
+  <div id="preloader"><div class="spinner"></div></div>
 
-<div id="preloader">
-  <div class="spinner"></div>
-</div>
+  <header>
+    <div class="logo-container">
+      <img src="logo-512x512-1.png" alt="DAV Logo">
+    </div>
+    <h1>D.A.V. College Jalandhar</h1>
+  </header>
 
-<header class="animated">
-  <div class="logo-container">
-    <img src="logo-512x512-1.png" alt="DAV Logo">
-  </div>
-  <h1>D.A.V. College Jalandhar</h1>
-</header>
+  <main>
+    <h2>Location Verification</h2>
+    <p>We are checking if you're at the correct attendance location...</p>
+    <div id="map"></div>
+    <div id="status">Checking your location...</div>
+    <a id="continue-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSes1UrXLhL3qGisGJXeO2DFmLVZZkcxXtITLQ3WRQNDoMcLhQ/viewform?usp=dialog" target="_blank" style="display: none;">Continue</a>
+  </main>
 
-<main class="animated">
-  <h2>Location Verification</h2>
-  <p>Please stay near your classroom to mark attendance.</p>
-  <div id="map"></div>
-  <div id="status">Checking your location...</div>
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSes1UrXLhL3qGisGJXeO2DFmLVZZkcxXtITLQ3WRQNDoMcLhQ/viewform?usp=dialog"
-     class="continue-btn" id="continueBtn" style="display: none;" target="_blank">Continue</a>
-</main>
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="https://www.youtube.com/@nischaybahl7714" target="_blank">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:bca25.28.dav@gmail.com">bca25.28.dav@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)
+    </div>
+  </footer>
 
-<footer>
-  <div class="footer-section">
-    <h3>Quick Links</h3>
-    <ul>
-      <li><a href="https://www.youtube.com/@nischaybahl7714" target="_blank">YouTube Channel</a></li>
-    </ul>
-  </div>
-  <div class="footer-section">
-    <h3>Contact</h3>
-    <ul>
-      <li><a href="mailto:bca25.28.dav@gmail.com">bca25.28.dav@gmail.com</a></li>
-    </ul>
-  </div>
-  <div class="footer-credits">
-    &copy; 2025 D.A.V. College Jalandhar. All rights reserved.<br />
-    Developed by Prabhsimranjot Singh (BCA FCA-1)
-  </div>
-</footer>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    window.onload = function () {
+      setTimeout(() => {
+        document.getElementById('preloader').style.display = 'none';
+      }, 1500);
+    };
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-  const requiredLat = 31.3494154;
-  const requiredLng = 75.5573411;
-  const radius = 0.05;
+    const requiredLat = 31.3494154;
+    const requiredLng = 75.5573411;
+    const radius = 0.05; // 50 meters
 
-  function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) ** 2 +
-              Math.cos(lat1 * Math.PI / 180) *
-              Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-
-  function initMap(lat, lng) {
-    const map = L.map('map', {
-      center: [lat, lng],
-      zoom: 18,
-      zoomControl: false,
-      dragging: false,
-      scrollWheelZoom: false,
-      doubleClickZoom: false,
-      boxZoom: false,
-      keyboard: false,
-      tap: false,
-      touchZoom: false
-    });
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: ''
-    }).addTo(map);
-
-    L.circleMarker([lat, lng], {
-      radius: 10,
-      fillColor: '#4fc3f7',
-      fillOpacity: 0.7,
-      stroke: false
-    }).addTo(map);
-  }
-
-  let userLat = null, userLng = null;
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      userLat = position.coords.latitude;
-      userLng = position.coords.longitude;
-    },
-    (err) => {
-      document.getElementById('status').textContent = "⚠️ Unable to access location.";
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
     }
-  );
 
-  setTimeout(() => {
-    document.getElementById('preloader').style.display = "none";
+    function showMap(lat, lng) {
+      const map = L.map('map').setView([lat, lng], 18);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+      L.marker([lat, lng]).addTo(map).bindPopup("You are here.").openPopup();
+    }
 
-    if (userLat !== null && userLng !== null) {
-      const distance = getDistance(userLat, userLng, requiredLat, requiredLng);
-      const isInside = distance <= radius;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        showMap(latitude, longitude);
+        const distance = getDistance(latitude, longitude, requiredLat, requiredLng);
+        const isWithinRange = distance <= radius;
+        const status = document.getElementById("status");
+        const continueBtn = document.getElementById("continue-btn");
 
-      initMap(userLat, userLng);
-
-      const status = document.getElementById('status');
-      const btn = document.getElementById('continueBtn');
-
-      if (isInside) {
-        status.textContent = "✅ You are within the required area.";
-        status.style.color = "#4caf50";
-        btn.style.display = "inline-block";
-      } else {
-        status.textContent = "❌ You are not at the required location.";
-        status.style.color = "#f44336";
+        if (isWithinRange) {
+          status.textContent = "✅ You are at the required location.";
+          status.style.color = "#4caf50";
+          continueBtn.style.display = "inline-block";
+        } else {
+          status.textContent = "❌ You are not at the required location!";
+          status.style.color = "#f44336";
+        }
+      },
+      (err) => {
+        document.getElementById("status").textContent = "❌ Error getting your location.";
       }
-    } else {
-      document.getElementById('status').textContent = "⚠️ Could not retrieve location.";
-    }
-
-    // Reveal animations after preload
-    document.querySelectorAll('.animated').forEach((el, i) => {
-      setTimeout(() => el.classList.add('show'), i * 300);
-    });
-  }, 1500);
-</script>
+    );
+  </script>
 </body>
 </html>
