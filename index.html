@@ -7,19 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-      --highlight: rgba(30, 144, 255, 0.5);
-      --footer-color: #333333;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #121212;
-        --text-color: #ffffff;
-        --highlight: rgba(79, 195, 247, 0.5);
-        --footer-color: #eeeeee;
-      }
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --highlight: rgba(79, 195, 247, 0.5);
+      --footer-bg: #121212;
+      --footer-text: #ffffff;
     }
 
     * {
@@ -43,11 +35,11 @@
       align-items: center;
       padding: 1rem 2rem;
       background-color: var(--bg-color);
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #444;
     }
 
     .logo-container {
-      background: white;
+      background: #fff;
       border-radius: 8px;
       padding: 5px;
       margin-right: 1rem;
@@ -57,7 +49,6 @@
       height: 50px;
       width: auto;
       border-radius: 4px;
-      outline: 1px solid white;
     }
 
     h1 {
@@ -74,8 +65,6 @@
       align-items: center;
       justify-content: flex-start;
       flex: 1;
-      margin-bottom: 100px; /* Space for fixed footer */
-      overflow: hidden;
     }
 
     main::before {
@@ -104,14 +93,14 @@
       height: 300px;
       border-radius: 12px;
       margin-top: 1.5rem;
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
     }
 
     #status {
       margin-top: 1rem;
       padding: 0.8rem 1.2rem;
       border-radius: 8px;
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(255, 255, 255, 0.05);
       font-weight: bold;
       font-size: 1.1rem;
     }
@@ -123,7 +112,7 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(30, 144, 255, 0.5);
       color: var(--text-color);
       backdrop-filter: blur(5px);
       border: 1px solid var(--highlight);
@@ -132,37 +121,62 @@
       text-decoration: none;
     }
 
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      padding: 1rem;
-      font-size: 1.1rem;
-      color: var(--footer-color);
-      background-color: var(--bg-color);
-      border-top: 1px solid #ccc;
-      z-index: 100;
+    .continue-btn:hover {
+      background: rgba(30, 144, 255, 0.8);
     }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1rem;
-      }
+    footer {
+      background-color: var(--footer-bg);
+      color: var(--footer-text);
+      padding: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
 
-      #map {
-        height: 250px;
-      }
+    .footer-col {
+      flex: 1;
+      min-width: 200px;
+      margin: 1rem;
+    }
 
-      .continue-btn {
-        font-size: 1rem;
-        padding: 0.6rem 1.2rem;
-      }
+    .footer-col h4 {
+      margin-bottom: 0.6rem;
+      font-size: 1.1rem;
+    }
 
+    .footer-col ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 0.3rem;
+    }
+
+    .footer-col ul li a {
+      color: var(--footer-text);
+      text-decoration: none;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      width: 100%;
+      margin-top: 1.5rem;
+      border-top: 1px solid #444;
+      padding-top: 0.8rem;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
       footer {
-        font-size: 1rem;
-        padding: 0.8rem;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .footer-col {
+        margin: 1rem 0;
       }
     }
   </style>
@@ -184,13 +198,39 @@
   </main>
 
   <footer>
-    Credits: Prabhsimranjot Singh, BCA (FCA-1)
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Attendance Policy</a></li>
+        <li><a href="#">Help</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Social Media</h4>
+      <ul>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">attendance@davjalandhar.edu</a></li>
+        <li><a href="#">nischay.bahl@davjalandhar.edu</a></li>
+        <li><a href="#">support@davcollege.in</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2025 DAV College | Developed by Prabhsimranjot Singh, BCA (FCA-1)
+    </div>
   </footer>
 
   <script>
     const requiredLat = 31.3494154;
     const requiredLng = 75.5573411;
-    const radius = 0.05; // 50 meters
+    const radius = 0.05;
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -249,7 +289,6 @@
     );
   </script>
 
-  <!-- Leaflet.js for map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
