@@ -279,7 +279,7 @@
     <p>We are checking if you're at the correct attendance location...</p>
     <div id="map"></div>
     <div id="status">Checking your location...</div>
-    <a id="continue-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSes1UrXLhL3qGisGJXeO2DFmLVZZkcxXtITLQ3WRQNDoMcLhQ/viewform?usp=dialog" target="_blank" style="display: none;">Continue</a>
+    <a id="continue-btn" href="form.html" target="_blank" style="display: none;">Continue</a>
   </main>
 
   <footer>
@@ -347,7 +347,7 @@
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      L.marker([lat, lng]).addTo(map); // Removed popup
+      L.marker([lat, lng]).addTo(map);
     }
 
     navigator.geolocation.getCurrentPosition(
@@ -374,7 +374,6 @@
       }
     );
 
-    // Handle preloader + animation start
     window.onload = function () {
       setTimeout(() => {
         document.getElementById('preloader').classList.add('fade-out');
