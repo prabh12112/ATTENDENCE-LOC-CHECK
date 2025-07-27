@@ -22,7 +22,7 @@
     main::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%); z-index: -1; }
     form { background-color: rgba(0,0,0,0.6); padding: 2rem; border-radius: 12px; max-width: 600px; width: 100%; margin: 2rem auto; box-shadow: 0 0 20px rgba(0,0,0,0.4); text-align: left; }
     label { display: block; margin: 1rem 0 0.5rem; }
-    select, input[type="text"], input[type="checkbox"], input[type="password"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
+    select, input[type="text"], input[type="checkbox"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
     input[readonly] { background-color: #333; }
     button { margin-top: 1rem; width: 100%; padding: 0.8rem; border: none; border-radius: 8px; background-color: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; }
     button:hover { background-color: #03a9f4; }
@@ -79,8 +79,22 @@
 
 <script>
   const rollToName = {
-    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", // etc.
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "tushar", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", "51": "KUNAL BHAGAT", "52": "JATIN GILHOTRA", "53": "LAKSH KALIA", "54": "LAKSHAY JOSHI", "55": "MAANSHU DUBEY", "56": "PREET LOI", "57": "KARAN SINGH", "58": "VIBHOR JAIN", "59": "UTKARSHA RAJ SINGH", "60": "MEHAK", "61": "NIKHIL",// extend as needed
   };
+
+  const securityCodes = {
+    "2025-07-27": "ABC",
+    "2025-07-28": "DEF",
+    "2025-07-29": "GHI",
+    "2025-07-30": "JKL",
+    "2025-07-31": "MNO",
+    "2025-08-01": "PQR",
+    "2025-08-02": "STU",
+    "2025-08-03": "VWX",
+    "2025-08-04": "YZA",
+    "2025-08-05": "BCD"
+  };
+
   let todayCode = "";
 
   function disableFields(disabled) {
@@ -108,12 +122,15 @@
       document.getElementById('name').value = rollToName[e.target.value] || '';
     });
 
-    fetch("https://script.google.com/macros/s/AKfycbwoGxLlp2a0pOPsBPCDZvXTESP7votu96ItqlGPwDx1I9ZHSnjr7WfwWpIH8a4DUxP5/exec")
-      .then(res => res.text())
-      .then(code => {
-        todayCode = code.trim();
-        disableFields(true);
-      });
+    const IST = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+    todayCode = securityCodes[IST] || "";
+
+    if (!todayCode) {
+      alert("No attendance code set for today.");
+      disableFields(true);
+    } else {
+      disableFields(true);
+    }
 
     document.getElementById('attendanceForm').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -126,7 +143,7 @@
         return;
       }
 
-      const codeInput = document.getElementById('code').value.trim();
+      const codeInput = document.getElementById('code').value.trim().toUpperCase();
       if (codeInput !== todayCode) {
         document.getElementById('codeError').classList.remove('hidden');
         return;
