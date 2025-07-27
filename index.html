@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Location Check - DAV College</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -11,6 +11,7 @@
       --bg-color: #ffffff;
       --text-color: #000000;
       --highlight: #1e90ff;
+      --footer-color: #333333;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -18,6 +19,7 @@
         --bg-color: #121212;
         --text-color: #ffffff;
         --highlight: #4fc3f7;
+        --footer-color: #eeeeee;
       }
     }
 
@@ -31,11 +33,10 @@
     body {
       background-color: var(--bg-color);
       color: var(--text-color);
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      scroll-behavior: smooth;
-      user-select: none;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     header {
@@ -79,7 +80,7 @@
 
     main::before {
       content: "";
-      background-image: url('python-blog-image.jpg');
+      background-image: url('python-blog-image.jpg'); /* Upload this to GitHub repo */
       background-size: cover;
       background-position: center;
       position: absolute;
@@ -104,7 +105,6 @@
       border-radius: 12px;
       margin-top: 1.5rem;
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      z-index: 1;
     }
 
     #status {
@@ -114,57 +114,52 @@
       background-color: rgba(255, 255, 255, 0.1);
       font-weight: bold;
       font-size: 1.1rem;
-      z-index: 1;
     }
 
-    #continueBtn {
+    .continue-btn {
       margin-top: 2rem;
-      padding: 0.7rem 1.5rem;
-      font-size: 1rem;
-      background-color: var(--highlight);
-      color: white;
+      padding: 0.8rem 1.5rem;
+      font-size: 1.1rem;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+      backdrop-filter: blur(5px);
+      border: 1px solid var(--highlight);
+      transition: all 0.3s ease;
       display: none;
-      z-index: 1;
     }
 
-    #continueBtn:hover {
-      opacity: 0.9;
+    .continue-btn:hover {
+      background: var(--highlight);
+      color: white;
     }
 
     footer {
-      background-color: var(--bg-color);
       text-align: center;
-      padding: 1.2rem;
-      font-size: 1.1rem;
-      font-family: 'Montserrat', sans-serif;
-      color: var(--text-color);
+      padding: 1rem;
+      font-size: 1.05rem;
+      color: var(--footer-color);
       border-top: 1px solid #ccc;
-      position: sticky;
-      bottom: 0;
-      width: 100%;
-    }
-
-    .shake {
-      animation: shake 0.4s;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-3px); }
+      margin-top: auto;
     }
 
     @media (max-width: 600px) {
       h1 {
         font-size: 1rem;
       }
+
       #map {
         height: 250px;
       }
+    }
+
+    /* Prevent copy */
+    body {
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
   </style>
 </head>
@@ -181,7 +176,7 @@
     <p>We are checking if you're at the correct attendance location...</p>
     <div id="map"></div>
     <div id="status">Checking your location...</div>
-    <button id="continueBtn">Continue</button>
+    <a class="continue-btn" id="continueBtn" href="https://docs.google.com/forms/d/e/1FAIpQLSes1UrXLhL3qGisGJXeO2DFmLVZZkcxXtITLQ3WRQNDoMcLhQ/viewform?usp=dialog" target="_blank">✅ Continue to Attendance</a>
   </main>
 
   <footer>
@@ -192,7 +187,7 @@
   <script>
     const requiredLat = 31.3494154;
     const requiredLng = 75.5573411;
-    const radius = 0.15; // in km (150 meters)
+    const radius = 0.15; // 150 meters
 
     function getDistanceInKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -206,48 +201,47 @@
       return R * c;
     }
 
-    function updateStatus(message, isSuccess) {
-      const status = document.getElementById('status');
-      status.textContent = message;
-      status.classList.remove("shake");
-      if (!isSuccess) {
-        status.classList.add("shake");
-        status.style.color = "#f44336";
-      } else {
-        status.style.color = "#4caf50";
-      }
-    }
-
     function showMap(lat, lng) {
       const map = L.map('map').setView([lat, lng], 17);
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
       }).addTo(map);
-      L.marker([lat, lng]).addTo(map).bindPopup("Your Location").openPopup();
+
+      L.marker([lat, lng]).addTo(map)
+        .bindPopup('You are here')
+        .openPopup();
+
       L.circle([requiredLat, requiredLng], {
-        color: '#00bcd4',
-        fillColor: '#00bcd4',
-        fillOpacity: 0.2,
+        color: 'green',
+        fillColor: '#0f03',
+        fillOpacity: 0.3,
         radius: radius * 1000
       }).addTo(map);
     }
 
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        showMap(lat, lng);
-        const distance = getDistanceInKm(lat, lng, requiredLat, requiredLng);
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const distance = getDistanceInKm(latitude, longitude, requiredLat, requiredLng);
         const isInside = distance <= radius;
+
+        showMap(latitude, longitude);
+
+        const status = document.getElementById('status');
+        const continueBtn = document.getElementById('continueBtn');
+
         if (isInside) {
-          updateStatus("✅ You are within the allowed location.");
-          document.getElementById('continueBtn').style.display = 'inline-block';
+          status.textContent = "✅ You are at the required location.";
+          status.style.color = "#4caf50";
+          continueBtn.style.display = "inline-block";
         } else {
-          updateStatus("❌ You are NOT at the required location!", false);
+          status.textContent = "❌ You are not at the required location.";
+          status.style.color = "#f44336";
         }
       },
-      (err) => {
-        updateStatus("❌ Error accessing location: " + err.message, false);
+      (error) => {
+        document.getElementById("status").textContent = "⚠️ Error getting your location.";
       }
     );
   </script>
