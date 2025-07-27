@@ -8,7 +8,7 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
     body { background-color: #121212; color: #ffffff; overflow-x: hidden; }
-    #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: all 0.5s ease; }
+    #preloader { position: fixed; top: 0; left:  0; width: 100%; height: 100%; background: #121212; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: all 0.5s ease; }
     #preloader.fade-out { opacity: 0; transform: scale(0); pointer-events: none; }
     .spinner { border: 4px solid #ccc; border-top: 4px solid rgba(30, 144, 255, 0.5); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
@@ -22,7 +22,7 @@
     main::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%); z-index: -1; }
     form { background-color: rgba(0,0,0,0.6); padding: 2rem; border-radius: 12px; max-width: 600px; width: 100%; margin: 2rem auto; box-shadow: 0 0 20px rgba(0,0,0,0.4); text-align: left; }
     label { display: block; margin: 1rem 0 0.5rem; }
-    select, input[type="text"], input[type="checkbox"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
+    select, input[type="text"], input[type="checkbox"], input[type="password"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
     input[readonly] { background-color: #333; }
     button { margin-top: 1rem; width: 100%; padding: 0.8rem; border: none; border-radius: 8px; background-color: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; }
     button:hover { background-color: #03a9f4; }
@@ -62,6 +62,24 @@
     <label><input type="checkbox" id="confirm" required> I confirm that I am present.</label>
     <button type="submit">Submit Attendance</button>
   </form>
+
+  <!-- Admin Login -->
+  <div style="margin-top: 2rem;">
+    <button onclick="document.getElementById('adminLogin').classList.toggle('hidden')">Admin Login</button>
+    <div id="adminLogin" class="hidden">
+      <input type="text" id="adminUser" placeholder="Username">
+      <input type="password" id="adminPass" placeholder="Password">
+      <button onclick="verifyAdmin()">Login as Admin</button>
+    </div>
+  </div>
+
+  <!-- Hidden Admin Panel -->
+  <section id="adminPanel" class="hidden" style="margin-top: 2rem;">
+    <h3>🔒 Admin Panel</h3>
+    <input type="text" id="newCode" maxlength="3" placeholder="New 3-char Code">
+    <button onclick="updateCode()">Update Code</button>
+    <p id="adminStatus" style="color: lightgreen;"></p>
+  </section>
 </main>
 <footer>
   <div class="footer-content">
@@ -73,11 +91,60 @@
   <div class="footer-divider"></div>
   <div class="footer-bottom">© 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)</div>
 </footer>
+
 <script>
   const rollToName = {
-    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "tushar", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", "51": "KUNAL BHAGAT", "52": "JATIN GILHOTRA", "53": "LAKSH KALIA", "54": "LAKSHAY JOSHI", "55": "MAANSHU DUBEY", "56": "PREET LOI", "57": "KARAN SINGH", "58": "VIBHOR JAIN", "59": "UTKARSHA RAJ SINGH", "60": "MEHAK", "61": "NIKHIL",// extend as needed
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", // etc.
   };
-  const validCode = "123"; // will be updated dynamically
+  const ADMIN_USERNAME = "admin";
+  const ADMIN_PASSWORD = "Prabh@77102";
+  let todayCode = "";
+
+  function disableFields(disabled) {
+    document.getElementById('roll').disabled = disabled;
+    document.getElementById('name').disabled = disabled;
+    document.getElementById('confirm').disabled = disabled;
+    document.querySelector('button[type="submit"]').disabled = disabled;
+  }
+
+  function verifyAdmin() {
+    const user = document.getElementById('adminUser').value.trim();
+    const pass = document.getElementById('adminPass').value.trim();
+    const panel = document.getElementById('adminPanel');
+    if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
+      panel.classList.remove('hidden');
+      document.getElementById('adminLogin').classList.add('hidden');
+    } else {
+      alert("Invalid admin credentials!");
+    }
+  }
+
+  function updateCode() {
+    const newCode = document.getElementById('newCode').value.trim().toUpperCase();
+    const status = document.getElementById('adminStatus');
+    if (newCode.length !== 3 || !/^[A-Z0-9]+$/.test(newCode)) {
+      status.style.color = "orange";
+      status.textContent = "Code must be 3 letters/numbers.";
+      return;
+    }
+    fetch("https://script.google.com/macros/s/AKfycbwoGxLlp2a0pOPsBPCDZvXTESP7votu96ItqlGPwDx1I9ZHSnjr7WfwWpIH8a4DUxP5/exec", {
+      method: "POST",
+      body: JSON.stringify({ code: newCode }),
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(res => res.text())
+      .then(response => {
+        todayCode = newCode;
+        document.getElementById('code').value = newCode;
+        disableFields(false);
+        status.style.color = "lightgreen";
+        status.textContent = "Code updated successfully.";
+      })
+      .catch(err => {
+        status.style.color = "red";
+        status.textContent = "Failed to update code.";
+      });
+  }
 
   window.onload = function () {
     setTimeout(() => {
@@ -86,7 +153,7 @@
     }, 1500);
 
     const rollDropdown = document.getElementById('roll');
-    Object.keys(rollToName).sort((a,b)=>a-b).forEach(roll => {
+    Object.keys(rollToName).sort((a, b) => a - b).forEach(roll => {
       const option = document.createElement('option');
       option.value = roll;
       option.textContent = roll;
@@ -97,7 +164,14 @@
       document.getElementById('name').value = rollToName[e.target.value] || '';
     });
 
-    document.getElementById('attendanceForm').addEventListener('submit', function(e) {
+    fetch("https://script.google.com/macros/s/AKfycbwoGxLlp2a0pOPsBPCDZvXTESP7votu96ItqlGPwDx1I9ZHSnjr7WfwWpIH8a4DUxP5/exec")
+      .then(res => res.text())
+      .then(code => {
+        todayCode = code.trim();
+        disableFields(true);
+      });
+
+    document.getElementById('attendanceForm').addEventListener('submit', function (e) {
       e.preventDefault();
       const now = new Date();
       const ISTTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
@@ -107,17 +181,27 @@
         alert("Form accessible only between 1:30 PM and 2:15 PM IST");
         return;
       }
-      const code = document.getElementById('code').value.trim();
-      if (code !== validCode) {
+
+      const codeInput = document.getElementById('code').value.trim();
+      if (codeInput !== todayCode) {
         document.getElementById('codeError').classList.remove('hidden');
         return;
       }
       document.getElementById('codeError').classList.add('hidden');
       alert("Attendance submitted successfully.");
-      // TODO: Send attendance via backend email function
+    });
+
+    document.getElementById('code').addEventListener('input', function () {
+      const inputCode = this.value.trim();
+      if (inputCode === todayCode) {
+        document.getElementById('codeError').classList.add('hidden');
+        disableFields(false);
+      } else {
+        disableFields(true);
+        document.getElementById('codeError').classList.remove('hidden');
+      }
     });
   };
 </script>
 </body>
 </html>
-
