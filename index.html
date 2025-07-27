@@ -348,7 +348,7 @@
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      L.marker([lat, lng]).addTo(map).bindPopup("You are here.").openPopup();
+      L.marker([lat, lng]).addTo(map); // No popup
     }
 
     navigator.geolocation.getCurrentPosition(
@@ -375,7 +375,6 @@
       }
     );
 
-    // Handle preloader + animation start
     window.onload = function () {
       setTimeout(() => {
         document.getElementById('preloader').classList.add('fade-out');
