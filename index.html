@@ -2,15 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Attendance Location Check</title>
   <style>
     :root {
-      --bg-light: #ffffff;
-      --bg-dark: #121212;
-      --text-light: #ffffff;
-      --text-dark: #000000;
-      --accent: #4fc3f7;
+      --bg-light: #f0f0f0;
+      --bg-dark: #111;
+      --text-light: #fff;
+      --text-dark: #111;
+      --accent: #4caf50;
+      --error: #ff4f4f;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -18,150 +35,141 @@
         background-color: var(--bg-dark);
         color: var(--text-light);
       }
-      .card {
-        background-color: #1e1e1e;
-      }
     }
 
-    @media (prefers-color-scheme: light) {
-      body {
-        background-color: var(--bg-light);
-        color: var(--text-dark);
-      }
-      .card {
-        background-color: #f5f5f5;
-      }
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      scroll-behavior: smooth;
+    .logo-container {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
 
-    header {
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    header img {
-      width: 120px;
-      margin-bottom: 10px;
-    }
-
-    .card {
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-      text-align: center;
+    .college-logo {
+      width: 80px;
+      height: auto;
+      border-radius: 8px;
       transition: all 0.3s ease;
     }
 
-    #loading {
-      font-size: 1.2rem;
-      margin-top: 20px;
-      color: var(--accent);
+    @media (prefers-color-scheme: dark) {
+      .college-logo {
+        outline: 1px solid white;
+        outline-offset: 2px;
+        background-color: #111;
+        padding: 2px;
+      }
     }
 
-    #error {
+    h1 {
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .status {
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      border-radius: 8px;
       font-size: 1.2rem;
-      margin-top: 20px;
-      color: #ff4c4c;
+      background-color: var(--accent);
+      color: white;
       display: none;
-      animation: shake 0.4s ease-in-out;
+    }
+
+    .error {
+      background-color: var(--error);
+      animation: shake 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .error::before {
+      content: "❌";
+      margin-right: 0.5rem;
     }
 
     @keyframes shake {
-      0% { transform: translateX(0); }
+      0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px); }
-      100% { transform: translateX(0); }
+      75% { transform: translateX(5px); }
     }
 
     footer {
-      position: fixed;
-      bottom: 10px;
+      margin-top: 3rem;
       font-size: 0.9rem;
       text-align: center;
-      width: 100%;
-      color: gray;
-    }
-
-    .cross {
-      font-size: 2rem;
-      color: red;
-      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="logo-512x512-1.png" alt="DAV College Logo" />
-    <h2>DAV College - Location Based Attendance</h2>
-  </header>
-
-  <div class="card">
-    <h3>Checking your location...</h3>
-    <div id="loading">Please wait while we verify your location.</div>
-    <div id="error">
-      <div class="cross">✖</div>
-      You're not within the allowed area (100m). Access denied.
-    </div>
+  <div class="logo-container">
+    <img src="logo-512x512-1.png" alt="DAV College Logo" class="college-logo" />
+    <h1>Attendance Location Verification</h1>
   </div>
 
+  <div id="status" class="status"></div>
+
   <footer>
-    Created by: Prabhsimranjot Singh, BCA (FCA-1)
+    <p>Developed by <strong>Prabhsimranjot Singh</strong>, Class - BCA (FCA-1)</p>
   </footer>
 
   <script>
-    const allowedLat = 31.3494833;
-    const allowedLng = 75.5573274;
-    const allowedDistanceMeters = 100;
-    const formURL = "https://forms.gle/WLSmzCcAY48hpAjbA"; // Change if form changes
+    const CLASS_LAT = 31.3494833;
+    const CLASS_LNG = 75.5573274;
+    const ALLOWED_RADIUS = 100; // in meters
+    const GOOGLE_FORM_URL = "https://forms.gle/WLSmzCcAY48hpAjbA";
 
-    function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+    const statusDiv = document.getElementById("status");
+
+    function showStatus(message, isError = false) {
+      statusDiv.textContent = message;
+      statusDiv.classList.remove("error");
+      statusDiv.style.display = "block";
+      if (isError) {
+        statusDiv.classList.add("error");
+      }
+    }
+
+    function getDistance(lat1, lon1, lat2, lon2) {
       const R = 6371e3;
       const φ1 = lat1 * Math.PI / 180;
       const φ2 = lat2 * Math.PI / 180;
       const Δφ = (lat2 - lat1) * Math.PI / 180;
       const Δλ = (lon2 - lon1) * Math.PI / 180;
 
-      const a = Math.sin(Δφ / 2) ** 2 +
+      const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
                 Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ / 2) ** 2;
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                Math.sin(Δλ/2) * Math.sin(Δλ/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
       return R * c;
     }
 
-    function checkLocation(position) {
+    function verifyLocation(position) {
       const userLat = position.coords.latitude;
       const userLng = position.coords.longitude;
-      const distance = getDistanceFromLatLonInMeters(userLat, userLng, allowedLat, allowedLng);
 
-      if (distance <= allowedDistanceMeters) {
-        window.location.href = formURL;
+      const distance = getDistance(userLat, userLng, CLASS_LAT, CLASS_LNG);
+
+      if (distance <= ALLOWED_RADIUS) {
+        showStatus("Location verified. Redirecting to attendance form...");
+        setTimeout(() => window.location.href = GOOGLE_FORM_URL, 2000);
       } else {
-        document.getElementById('loading').style.display = 'none';
-        const errorDiv = document.getElementById('error');
-        errorDiv.style.display = 'block';
+        showStatus("You are not within the allowed range of the class location.", true);
       }
     }
 
     function showError() {
-      document.getElementById('loading').style.display = 'none';
-      const errorDiv = document.getElementById('error');
-      errorDiv.innerHTML = '<div class="cross">✖</div>Location access failed or blocked.';
-      errorDiv.style.display = 'block';
+      showStatus("Failed to get location permission. Please enable location services.", true);
     }
 
-    navigator.geolocation.getCurrentPosition(checkLocation, showError);
+    window.onload = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(verifyLocation, showError);
+      } else {
+        showStatus("Geolocation is not supported by this browser.", true);
+      }
+    };
   </script>
 </body>
 </html>
