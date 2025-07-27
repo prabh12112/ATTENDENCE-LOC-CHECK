@@ -7,11 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
-    body { background: linear-gradient(to right, #e0eafc, #cfdef3); min-height: 100vh; padding: 20px; }
-    header { text-align: center; padding: 20px 0; }
-    .logo-container img { width: 80px; height: 80px; }
+    body { background: url('images/background.jpg') no-repeat center center fixed; background-size: cover; min-height: 100vh; }
+    header { text-align: center; padding: 20px 0; background-color: rgba(255, 255, 255, 0.9); }
+    .logo-container img { width: 60px; height: 60px; }
     h1 { font-size: 1.8rem; margin-top: 10px; color: #222; }
-    main { max-width: 400px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    main { max-width: 400px; margin: 20px auto; background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     form { display: flex; flex-direction: column; }
     h2 { text-align: center; margin-bottom: 20px; color: #444; }
     label { margin-top: 10px; color: #333; }
@@ -25,6 +25,7 @@
     .spinner { width: 40px; height: 40px; border: 4px solid #ccc; border-top-color: #2d89e5; border-radius: 50%; animation: spin 1s linear infinite; }
     .fade-out { opacity: 0; visibility: hidden; transition: opacity 0.5s ease-out; }
     .visible { opacity: 1; transition: opacity 0.5s ease-in; }
+    footer { text-align: center; padding: 15px; background-color: rgba(255, 255, 255, 0.9); font-size: 0.9rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
@@ -32,7 +33,7 @@
 <div id="preloader"><div class="spinner"></div></div>
 <header>
   <div class="logo-container">
-    <img src="logo-512x512-1.png" alt="DAV Logo">
+    <img src="images/logo-512x512-1.png" alt="DAV Logo">
   </div>
   <h1>D.A.V. College Jalandhar</h1>
 </header>
@@ -53,6 +54,9 @@
     <button type="submit">Submit Attendance</button>
   </form>
 </main>
+<footer>
+  &copy; 2025 D.A.V. College Jalandhar | All rights reserved.
+</footer>
 <script>
   const rollToName = {
     "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR",
