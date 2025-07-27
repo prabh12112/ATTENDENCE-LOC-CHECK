@@ -9,7 +9,7 @@
     :root {
       --bg-color: #ffffff;
       --text-color: #000000;
-      --highlight: rgba(30, 144, 255, 0.5); /* half transparent blue */
+      --highlight: rgba(30, 144, 255, 0.5);
       --footer-color: #333333;
     }
 
@@ -17,7 +17,7 @@
       :root {
         --bg-color: #121212;
         --text-color: #ffffff;
-        --highlight: rgba(79, 195, 247, 0.5); /* lighter blue */
+        --highlight: rgba(79, 195, 247, 0.5);
         --footer-color: #eeeeee;
       }
     }
@@ -67,13 +67,14 @@
     main {
       position: relative;
       z-index: 1;
-      flex: 1;
       padding: 2rem;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+      flex: 1;
+      margin-bottom: 100px; /* Space for fixed footer */
       overflow: hidden;
     }
 
@@ -132,14 +133,17 @@
     }
 
     footer {
-      background-color: var(--bg-color);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
       text-align: center;
       padding: 1rem;
       font-size: 1.1rem;
       color: var(--footer-color);
+      background-color: var(--bg-color);
       border-top: 1px solid #ccc;
-      position: sticky;
-      bottom: 0;
+      z-index: 100;
     }
 
     @media (max-width: 600px) {
@@ -149,6 +153,16 @@
 
       #map {
         height: 250px;
+      }
+
+      .continue-btn {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+      }
+
+      footer {
+        font-size: 1rem;
+        padding: 0.8rem;
       }
     }
   </style>
@@ -176,7 +190,7 @@
   <script>
     const requiredLat = 31.3494154;
     const requiredLng = 75.5573411;
-    const radius = 0.05; // Changed to 50 meters
+    const radius = 0.05; // 50 meters
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
