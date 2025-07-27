@@ -2,11 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Location Check - DAV College</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg-color: #ffffff;
@@ -27,7 +25,7 @@
       padding: 0;
       box-sizing: border-box;
       font-family: 'Montserrat', sans-serif;
-      user-select: none;
+      user-select: none; /* 🔒 No text copying */
     }
 
     body {
@@ -73,10 +71,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: start;
-      overflow-x: hidden;
-      overflow-y: auto;
-      scroll-behavior: smooth;
+      justify-content: center;
+      overflow: hidden;
     }
 
     main::before {
@@ -112,57 +108,37 @@
       margin-top: 1rem;
       padding: 0.8rem 1.2rem;
       border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
       font-weight: bold;
       font-size: 1.1rem;
     }
 
-    .error {
-      color: #f44336;
-      animation: shake 0.4s;
-    }
-
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px); }
-      100% { transform: translateX(0); }
-    }
-
-    #continueSection {
-      margin-top: 4rem;
+    #continue-btn {
       display: none;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #continueBtn {
-      padding: 0.8rem 2rem;
-      font-size: 1.2rem;
-      background-color: var(--highlight);
-      color: white;
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
       border: none;
       border-radius: 8px;
+      background-color: var(--highlight);
+      color: white;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
 
-    #continueBtn:hover {
+    #continue-btn:hover {
       background-color: #1976d2;
     }
 
     footer {
       background-color: var(--bg-color);
       text-align: center;
-      padding: 1.2rem;
-      font-size: 1.2rem;
-      font-family: 'Montserrat', sans-serif;
+      padding: 1rem;
+      font-size: 1.1rem;
       color: var(--text-color);
       border-top: 1px solid #ccc;
-      margin-top: auto;
+      font-family: 'Montserrat', sans-serif;
       position: sticky;
       bottom: 0;
-      z-index: 2;
     }
 
     @media (max-width: 600px) {
@@ -172,15 +148,18 @@
       #map {
         height: 250px;
       }
-      #continueBtn {
-        font-size: 1rem;
-        width: 80%;
-      }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
     }
   </style>
 </head>
-
-<body oncontextmenu="return false;">
+<body>
   <header>
     <div class="logo-container">
       <img src="logo-512x512-1.png" alt="DAV Logo" />
@@ -193,24 +172,20 @@
     <p>We are checking if you're at the correct attendance location...</p>
     <div id="map"></div>
     <div id="status">Checking your location...</div>
-
-    <div id="continueSection">
-      <p style="margin-top: 2rem; font-size: 1.1rem;">You may now continue to mark your attendance.</p>
-      <button id="continueBtn" onclick="alert('Continue button clicked!')">Continue</button>
-    </div>
+    <button id="continue-btn" onclick="alert('You may now continue to mark attendance.')">Continue</button>
   </main>
 
   <footer>
     Credits: Prabhsimranjot Singh, BCA (FCA-1)
   </footer>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const requiredLat = 31.3260;
-    const requiredLng = 75.5762;
-    const radius = 0.2; // km
+    // ✅ Replace this with your ACTUAL classroom coordinates:
+    const requiredLat = 31.3259;
+    const requiredLng = 75.5760;
+    const radius = 0.5; // km
 
-    function getDistance(lat1, lon1, lat2, lon2) {
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -222,56 +197,62 @@
       return R * c;
     }
 
-    function updateStatus(isInside) {
-      const status = document.getElementById("status");
-      const continueSection = document.getElementById("continueSection");
-
-      if (isInside) {
-        status.textContent = "✅ You are at the required location.";
-        status.style.color = "#4caf50";
-        status.classList.remove("error");
-
-        setTimeout(() => {
-          continueSection.style.display = "flex";
-          continueSection.scrollIntoView({ behavior: 'smooth' });
-        }, 1200);
-      } else {
-        status.textContent = "❌ You are not at the required location!";
-        status.classList.add("error");
-      }
-    }
-
-    function showMap(lat, lng) {
-      const map = L.map('map').setView([lat, lng], 17);
+    function initMap(lat, lng) {
+      const map = L.map('map').setView([lat, lng], 16);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '© OpenStreetMap contributors'
       }).addTo(map);
 
-      L.marker([lat, lng]).addTo(map)
-        .bindPopup("You are here").openPopup();
+      L.marker([lat, lng]).addTo(map).bindPopup('Your Location').openPopup();
 
-      L.circle([requiredLat, requiredLng], {
-        color: '#1e90ff',
-        fillColor: '#1e90ff',
+      const circle = L.circle([requiredLat, requiredLng], {
+        color: '#00bcd4',
+        fillColor: '#00bcd4',
         fillOpacity: 0.1,
         radius: radius * 1000
       }).addTo(map);
     }
 
+    function updateStatus(isInside) {
+      const status = document.getElementById("status");
+      const button = document.getElementById("continue-btn");
+
+      if (isInside) {
+        status.textContent = "✅ You are at the required location.";
+        status.style.color = "#4caf50";
+        button.style.display = "block";
+      } else {
+        status.textContent = "❌ You are not at the required location!";
+        status.style.color = "#f44336";
+        status.style.animation = "shake 0.4s";
+      }
+    }
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const distance = getDistance(latitude, longitude, requiredLat, requiredLng);
+        const distance = getDistanceFromLatLonInKm(latitude, longitude, requiredLat, requiredLng);
         const isInside = distance <= radius;
+        initMap(latitude, longitude);
         updateStatus(isInside);
-        showMap(latitude, longitude);
       },
-      () => {
-        const status = document.getElementById("status");
-        status.textContent = "❌ Error getting location.";
-        status.classList.add("error");
+      (error) => {
+        document.getElementById("status").textContent = "Error getting location.";
       }
     );
   </script>
+
+  <!-- Leaflet.js for open source map -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-sA+BxKhZtDgkGhyPhvuuAaN0L+z0cU08I1lWvjvTJe0="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-o9N1jF8kSd2uFzXTf+gIf5TVEafKK3S3eNUH6TtN3xc="
+    crossorigin=""
+  ></script>
 </body>
 </html>
