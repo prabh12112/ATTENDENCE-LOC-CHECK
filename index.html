@@ -26,7 +26,6 @@
       overflow-x: hidden;
     }
 
-    /* Preloader */
     #preloader {
       position: fixed;
       top: 0; left: 0;
@@ -55,24 +54,24 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 1rem 2rem;
+      padding: 0.6rem 2rem;
       background-color: #1a1a1a;
     }
 
     .logo-container {
       background: white;
       border-radius: 8px;
-      padding: 5px;
+      padding: 4px;
     }
 
     .logo-container img {
-      height: 50px;
+      height: 40px;
       width: auto;
     }
 
     h1 {
-      font-size: 1.4rem;
-      animation: fadeInLeft 0.8s ease forwards;
+      font-size: 1.2rem;
+      opacity: 0;
     }
 
     main {
@@ -107,20 +106,22 @@
       z-index: -1;
     }
 
+    h2, p, #map, #status, #continue-btn {
+      opacity: 0;
+    }
+
     h2 {
       font-size: 1.5rem;
       margin-bottom: 1rem;
-      animation: typewriter 1s steps(20) 0.3s forwards, fadeInLeft 1s ease;
-      overflow: hidden;
       white-space: nowrap;
       border-right: 2px solid #4fc3f7;
       width: 0;
+      overflow: hidden;
     }
 
     p {
       font-size: 1rem;
       margin-bottom: 1.5rem;
-      animation: fadeInLeft 1.5s ease;
     }
 
     #map {
@@ -130,14 +131,12 @@
       margin: 1rem 0;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      animation: fadeInLeft 1.7s ease;
     }
 
     #status {
       margin-top: 1rem;
       font-size: 1.1rem;
       font-weight: bold;
-      animation: fadeInLeft 1.8s ease;
     }
 
     a#continue-btn {
@@ -152,7 +151,6 @@
       font-weight: 600;
       font-size: 1.1rem;
       cursor: pointer;
-      animation: fadeInLeft 2s ease;
     }
 
     a#continue-btn:hover {
@@ -163,24 +161,12 @@
       background-color: #1a1a1a;
       color: white;
       padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      text-align: center;
     }
 
     .footer-content {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      text-align: left;
-      margin-bottom: 1rem;
-    }
-
-    .footer-section {
-      flex: 1;
-      min-width: 120px;
       font-size: 0.8rem;
     }
 
@@ -201,7 +187,6 @@
     .footer-section a {
       color: #ccc;
       text-decoration: none;
-      font-size: 0.8rem;
     }
 
     .footer-bottom {
@@ -211,7 +196,10 @@
     }
 
     @media (max-width: 600px) {
-      h1 { font-size: 1.2rem; }
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      h1 { font-size: 1rem; }
       h2 { font-size: 1.2rem; }
       p { font-size: 0.95rem; }
       #map { height: 250px; }
@@ -238,8 +226,8 @@
   </header>
 
   <main>
-    <h2>Location Verification</h2>
-    <p>We are checking if you're at the correct attendance location...</p>
+    <h2 id="heading">Location Verification</h2>
+    <p id="desc">We are checking if you're at the correct attendance location...</p>
     <div id="map"></div>
     <div id="status">Checking your location...</div>
     <a id="continue-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSes1UrXLhL3qGisGJXeO2DFmLVZZkcxXtITLQ3WRQNDoMcLhQ/viewform?usp=dialog" target="_blank" style="display: none;">Continue</a>
@@ -250,6 +238,12 @@
       <div class="footer-section">
         <h4>Quick Links</h4>
         <ul>
+          <li><a href="#">Attendance Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Social Links</h4>
+        <ul>
           <li><a href="https://www.youtube.com/@nischaybahl7714" target="_blank">YouTube</a></li>
         </ul>
       </div>
@@ -259,6 +253,10 @@
           <li><a href="mailto:bca25.28.dav@gmail.com">bca25.28.dav@gmail.com</a></li>
         </ul>
       </div>
+      <div class="footer-section">
+        <h4>Address</h4>
+        <p>Mahatma Hans Raj Marg, <br> Dayanand Nagar, <br> Jalandhar, Punjab 144008, India</p>
+      </div>
     </div>
     <div class="footer-bottom">
       © 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)
@@ -267,30 +265,23 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    window.onload = function () {
-      setTimeout(() => {
-        document.getElementById('preloader').style.display = 'none';
-      }, 1500);
-    };
-
     const requiredLat = 31.3494154;
     const requiredLng = 75.5573411;
-    const radius = 0.05; // 50 meters
+    const radius = 0.05;
 
     function getDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     }
 
     function showMap(lat, lng) {
-      const map = L.map('map').setView([lat, lng], 18);
+      const map = L.map('map', { zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false }).setView([lat, lng], 18);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
@@ -315,10 +306,30 @@
           status.style.color = "#f44336";
         }
       },
-      (err) => {
+      () => {
         document.getElementById("status").textContent = "❌ Error getting your location.";
       }
     );
+
+    // Animate after preloader
+    window.onload = function () {
+      setTimeout(() => {
+        document.getElementById('preloader').style.display = 'none';
+
+        // Trigger animations
+        const fadeIn = (el, delay = 0) => {
+          el.style.animation = `fadeInLeft 1s ease ${delay}s forwards`;
+        };
+
+        fadeIn(document.querySelector('h1'), 0.1);
+        fadeIn(document.querySelector('h2'), 0.2);
+        document.querySelector('h2').style.animation += ', typewriter 1s steps(20) 0.2s forwards';
+        fadeIn(document.querySelector('p'), 0.4);
+        fadeIn(document.getElementById('map'), 0.6);
+        fadeIn(document.getElementById('status'), 0.8);
+        fadeIn(document.getElementById('continue-btn'), 1.0);
+      }, 1500);
+    };
   </script>
 </body>
 </html>
