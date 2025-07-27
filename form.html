@@ -6,7 +6,26 @@
   <title>Attendance Form</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* CSS omitted for brevity — remains unchanged */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+    body { background: linear-gradient(to right, #e0eafc, #cfdef3); min-height: 100vh; padding: 20px; }
+    header { text-align: center; padding: 20px 0; }
+    .logo-container img { width: 80px; height: 80px; }
+    h1 { font-size: 1.8rem; margin-top: 10px; color: #222; }
+    main { max-width: 400px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    form { display: flex; flex-direction: column; }
+    h2 { text-align: center; margin-bottom: 20px; color: #444; }
+    label { margin-top: 10px; color: #333; }
+    input, select { padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
+    input[readonly] { background: #f3f3f3; }
+    button { margin-top: 20px; padding: 10px; border: none; background: #2d89e5; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; }
+    button:disabled { background: #888; }
+    .error { color: red; font-size: 0.9rem; margin-top: 5px; }
+    .hidden { display: none; }
+    #preloader { position: fixed; width: 100%; height: 100%; background: white; top: 0; left: 0; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #ccc; border-top-color: #2d89e5; border-radius: 50%; animation: spin 1s linear infinite; }
+    .fade-out { opacity: 0; visibility: hidden; transition: opacity 0.5s ease-out; }
+    .visible { opacity: 1; transition: opacity 0.5s ease-in; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body oncontextmenu="return false">
@@ -34,9 +53,6 @@
     <button type="submit">Submit Attendance</button>
   </form>
 </main>
-<footer>
-  <!-- Footer remains unchanged -->
-</footer>
 <script>
   const rollToName = {
     "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR",
