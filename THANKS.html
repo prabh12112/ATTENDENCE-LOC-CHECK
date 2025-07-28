@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DAV Feedback Page</title>
+  <title>Attendance Submitted</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -80,6 +80,27 @@
       z-index: -1;
     }
 
+    .thank-container {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2rem 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      backdrop-filter: blur(8px);
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .thank-container h2 {
+      font-size: 2rem;
+      color: #4caf50;
+      margin-bottom: 1rem;
+    }
+
+    .thank-container p {
+      font-size: 1rem;
+      color: #ccc;
+    }
+
     footer {
       background-color: #1a1a1a;
       color: white;
@@ -134,7 +155,10 @@
 
       main {
         padding: 1rem;
-        min-height: auto;
+      }
+
+      .thank-container {
+        padding: 1.5rem;
       }
 
       footer {
@@ -165,9 +189,10 @@
   </header>
 
   <main>
-    <!-- Your page content goes here -->
-    <h2 style="color: white; margin-bottom: 1rem;">Thank you for your feedback!</h2>
-    <p style="color: #ccc;">This page inherits the header, footer, and background layout from the original attendance page.</p>
+    <div class="thank-container">
+      <h2>✅ Attendance Submitted</h2>
+      <p>Your presence has been successfully recorded.<br>Thank you for being punctual and responsible.</p>
+    </div>
   </main>
 
   <footer>
