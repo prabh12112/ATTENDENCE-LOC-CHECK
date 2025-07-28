@@ -22,12 +22,48 @@
     main::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%); z-index: -1; }
     form { background-color: rgba(0,0,0,0.6); padding: 2rem; border-radius: 12px; max-width: 600px; width: 100%; margin: 2rem auto; box-shadow: 0 0 20px rgba(0,0,0,0.4); text-align: left; }
     label { display: block; margin: 1rem 0 0.5rem; }
-    select, input[type="text"], input[type="checkbox"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
+    input[type="text"], input[type="checkbox"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
     input[readonly] { background-color: #333; }
     button { margin-top: 1rem; width: 100%; padding: 0.8rem; border: none; border-radius: 8px; background-color: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; }
     button:hover { background-color: #03a9f4; }
     .hidden { display: none; }
     .error { color: red; font-size: 0.9rem; }
+
+    /* Custom Dropdown Styles */
+    .custom-dropdown {
+      position: relative;
+      user-select: none;
+    }
+    .dropdown-selected {
+      padding: 0.7rem;
+      background-color: #222;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+    }
+    .dropdown-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #222;
+      border: 1px solid #444;
+      border-radius: 8px;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .dropdown-options div {
+      padding: 0.7rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .dropdown-options div:hover {
+      background-color: #333;
+    }
+
     footer { background-color: #1a1a1a; color: white; padding: 2rem; text-align: center; }
     .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin-bottom: 1rem; text-align: left; }
     .footer-section h4 { font-size: 0.9rem; margin-bottom: 0.5rem; }
@@ -49,12 +85,17 @@
 <main id="main-content">
   <form id="attendanceForm" method="POST" action="https://script.google.com/macros/s/AKfycbxSVOE1_zV-N_fFAi6U1i-cRD6zObrb_1MlFsbNkJd-ps8xCzq7-OcNZBPJKaymNk-rNg/exec" target="hidden_iframe">
     <h2>Attendance Form</h2>
+
     <label for="code">Security Code</label>
     <input type="text" id="code" maxlength="3" required>
     <div id="codeError" class="error hidden">Invalid code. Please try again.</div>
 
     <label for="roll">Roll Number</label>
-    <select id="roll" name="roll" required><option value="">Select Roll Number</option></select>
+    <div class="custom-dropdown" id="customDropdown">
+      <div class="dropdown-selected" id="dropdownSelected">Select Roll Number</div>
+      <div class="dropdown-options hidden" id="dropdownOptions"></div>
+      <input type="hidden" id="roll" name="roll" required />
+    </div>
 
     <label for="name">Name</label>
     <input type="text" id="name" name="name" readonly required>
@@ -82,23 +123,15 @@
   };
 
   const codeSchedule = {
-    "2025-07-27": "ABC",
-    "2025-07-28": "XUZ",
-    "2025-07-29": "11A",
-    "2025-07-30": "323",
-    "2025-07-31": "AIK",
-    "2025-07-01": "MLK",
-    "2025-07-02": "PQR",
-    "2025-07-03": "XUZ",
-    "2025-07-04": "MST",
-    "2025-07-05": "3KQ"
+    "2025-07-27": "ABC", "2025-07-28": "XUZ", "2025-07-29": "11A",
+    "2025-07-30": "323", "2025-07-31": "AIK", "2025-07-01": "MLK",
+    "2025-07-02": "PQR", "2025-07-03": "XUZ", "2025-07-04": "MST", "2025-07-05": "3KQ"
   };
 
   let todayCode = "";
 
   function disableFields(disabled) {
     document.getElementById('roll').disabled = disabled;
-    document.getElementById('name').disabled = disabled;
     document.getElementById('confirm').disabled = disabled;
     document.querySelector('button[type="submit"]').disabled = disabled;
   }
@@ -109,16 +142,38 @@
       document.getElementById('main-content').classList.add('visible');
     }, 1500);
 
-    const rollDropdown = document.getElementById('roll');
+    // Populate custom dropdown
+    const rollInput = document.getElementById('roll');
+    const nameInput = document.getElementById('name');
+    const dropdownSelected = document.getElementById('dropdownSelected');
+    const dropdownOptions = document.getElementById('dropdownOptions');
+    const dropdown = document.getElementById('customDropdown');
+
     Object.keys(rollToName).sort((a, b) => a - b).forEach(roll => {
-      const option = document.createElement('option');
-      option.value = roll;
-      option.textContent = roll;
-      rollDropdown.appendChild(option);
+      const div = document.createElement('div');
+      div.textContent = roll;
+      div.dataset.value = roll;
+      dropdownOptions.appendChild(div);
     });
 
-    rollDropdown.addEventListener('change', e => {
-      document.getElementById('name').value = rollToName[e.target.value] || '';
+    dropdownSelected.addEventListener('click', () => {
+      dropdownOptions.classList.toggle('hidden');
+    });
+
+    dropdownOptions.addEventListener('click', e => {
+      if (e.target.dataset.value) {
+        const roll = e.target.dataset.value;
+        rollInput.value = roll;
+        dropdownSelected.textContent = roll;
+        nameInput.value = rollToName[roll] || '';
+        dropdownOptions.classList.add('hidden');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdownOptions.classList.add('hidden');
+      }
     });
 
     const today = new Date().toISOString().split("T")[0];
@@ -163,7 +218,8 @@
       } else {
         setTimeout(() => {
           document.getElementById('attendanceForm').reset();
-          document.getElementById('name').value = "";
+          nameInput.value = "";
+          dropdownSelected.textContent = "Select Roll Number";
           disableFields(true);
         }, 500);
       }
