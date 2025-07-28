@@ -78,7 +78,15 @@
 
 <script>
   const rollToName = {
-    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "TUSHAR", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", "51": "KUNAL BHAGAT", "52": "JATIN GILHOTRA", "53": "LAKSH KALIA", "54": "LAKSHAY JOSHI", "55": "MAANSHU DUBEY", "56": "PREET LOI", "57": "KARAN SINGH", "58": "VIBHOR JAIN", "59": "UTKARSHA RAJ SINGH", "60": "MEHAK", "61": "NIKHIL",// extend as needed
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "TUSHAR", "7": "VANSH SHARMA",
+    "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR",
+    "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL",
+    "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA",
+    "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP",
+    "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR",
+    "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA",
+    "50": "KHUSHI", "51": "KUNAL BHAGAT", "52": "JATIN GILHOTRA", "53": "LAKSH KALIA", "54": "LAKSHAY JOSHI", "55": "MAANSHU DUBEY", "56": "PREET LOI",
+    "57": "KARAN SINGH", "58": "VIBHOR JAIN", "59": "UTKARSHA RAJ SINGH", "60": "MEHAK", "61": "NIKHIL"
   };
 
   const codeSchedule = {
@@ -147,7 +155,11 @@
         return;
       }
 
-      alert("Attendance submitted successfully.");
+      const confirmed = confirm("Attendance submitted successfully. Click OK to proceed to the feedback form.");
+      if (confirmed) {
+        window.location.href = "https://example.com/feedback"; // <- Replace with actual feedback form
+      }
+
       setTimeout(() => {
         document.getElementById('attendanceForm').reset();
         document.getElementById('name').value = "";
