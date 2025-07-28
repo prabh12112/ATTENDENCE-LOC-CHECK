@@ -29,44 +29,23 @@
     .hidden { display: none; }
     .error { color: red; font-size: 0.9rem; }
 
-    /* Custom Dropdown Styles with Animation */
     .custom-dropdown {
-      position: relative;
-      user-select: none;
+      position: relative; user-select: none;
     }
     .dropdown-selected {
-      padding: 0.7rem;
-      background-color: #222;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      border: none;
+      padding: 0.7rem; background-color: #222; color: white; border-radius: 8px; cursor: pointer; border: none;
     }
     .dropdown-options {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      max-height: 0;
-      overflow-y: hidden;
-      background-color: #222;
-      border: 1px solid #444;
-      border-radius: 8px;
-      z-index: 10;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-      opacity: 0;
-      transition: max-height 0.3s ease, opacity 0.3s ease;
-      scroll-behavior: smooth;
+      position: absolute; top: 100%; left: 0; right: 0; max-height: 0;
+      overflow-y: hidden; background-color: #222; border: 1px solid #444; border-radius: 8px;
+      z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.5); opacity: 0;
+      transition: max-height 0.3s ease, opacity 0.3s ease; scroll-behavior: smooth;
     }
     .dropdown-options.show {
-      max-height: 200px;
-      opacity: 1;
-      overflow-y: auto;
+      max-height: 200px; opacity: 1; overflow-y: auto;
     }
     .dropdown-options div {
-      padding: 0.7rem;
-      cursor: pointer;
-      transition: background 0.2s ease;
+      padding: 0.7rem; cursor: pointer; transition: background 0.2s ease;
     }
     .dropdown-options div:hover {
       background-color: #333;
@@ -127,16 +106,45 @@
 
 <script>
   const rollToName = {
-    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "TUSHAR", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", "52": "KUNAL BHAGAT", "53": "JATIN GILHOTRA", "54": "LAKSH KALIA", "55": "LAKSHAY JOSHI", "56": "MAANSHU DUBEY", "57": "PREET LOI", "58": "KARAN SINGH", "59": "VIBHOR JAIN", "60": "UTKARSHA RAJ SINGH", "61": "MEHAK", "62": "NIKHIL"
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR",
+    "6": "TUSHAR", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR",
+    "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA",
+    "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY",
+    "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA",
+    "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH",
+    "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP",
+    "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR",
+    "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY",
+    "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI",
+    "52": "KUNAL BHAGAT", "53": "JATIN GILHOTRA", "54": "LAKSH KALIA", "55": "LAKSHAY JOSHI", "56": "MAANSHU DUBEY",
+    "57": "PREET LOI", "58": "KARAN SINGH", "59": "VIBHOR JAIN", "60": "UTKARSHA RAJ SINGH", "61": "MEHAK", "62": "NIKHIL"
   };
 
   const codeSchedule = {
     "2025-07-27": "ABC", "2025-07-28": "XUZ", "2025-07-29": "11A",
-    "2025-07-30": "323", "2025-07-31": "AIK", "2025-07-01": "MLK",
-    "2025-07-02": "PQR", "2025-07-03": "XUZ", "2025-07-04": "MST", "2025-07-05": "3KQ"
+    "2025-07-30": "323", "2025-07-31": "AIK", "2025-08-01": "MLK",
+    "2025-08-02": "PQR"
+  };
+
+  const formSchedule = {
+    "Monday":    [{ start: "10:30", end: "11:15" }, { start: "12:00", end: "12:45" }],
+    "Tuesday":   [{ start: "10:30", end: "11:15" }, { start: "12:00", end: "12:45" }],
+    "Wednesday": [{ start: "10:30", end: "11:15" }, { start: "12:00", end: "12:45" }, { start: "13:30", end: "14:15" }],
+    "Thursday":  [{ start: "10:30", end: "11:15" }, { start: "12:00", end: "12:45" }, { start: "13:30", end: "14:15" }],
+    "Friday":    [{ start: "10:30", end: "11:15" }, { start: "12:00", end: "12:45" }, { start: "13:30", end: "14:15" }],
+    "Saturday":  [{ start: "10:30", end: "11:15" }, { start: "12:00", end: "12:45" }, { start: "13:30", end: "14:15" }]
   };
 
   let todayCode = "";
+
+  function isFormOpenNow() {
+    const now = new Date();
+    const day = now.toLocaleDateString("en-US", { weekday: "long", timeZone: "Asia/Kolkata" });
+    const timeNow = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Kolkata" });
+    const schedule = formSchedule[day];
+    if (!schedule) return false;
+    return schedule.some(slot => timeNow >= slot.start && timeNow <= slot.end);
+  }
 
   function disableFields(disabled) {
     document.getElementById('roll').disabled = disabled;
@@ -150,7 +158,12 @@
       document.getElementById('main-content').classList.add('visible');
     }, 1500);
 
-    // Dropdown population & handling
+    const mainContent = document.getElementById('main-content');
+    if (!isFormOpenNow()) {
+      mainContent.innerHTML = "<h2 style='color: red;'>The attendance form is currently closed.<br>Please check your class schedule.</h2>";
+      return;
+    }
+
     const rollInput = document.getElementById('roll');
     const nameInput = document.getElementById('name');
     const dropdownSelected = document.getElementById('dropdownSelected');
@@ -201,16 +214,6 @@
 
     document.getElementById('attendanceForm').addEventListener('submit', function (e) {
       e.preventDefault();
-
-      const now = new Date();
-      const ISTTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
-      const hour = ISTTime.getHours();
-      const minute = ISTTime.getMinutes();
-      if (!(hour === 19 && minute >= 22 || hour === 20 && minute <= 15)) {
-        alert("Form accessible only between 1:30 PM and 2:15 PM IST");
-        return;
-      }
-
       const codeInput = document.getElementById('code').value.trim().toUpperCase();
       if (codeInput !== todayCode) {
         document.getElementById('codeError').classList.remove('hidden');
