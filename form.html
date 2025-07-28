@@ -249,8 +249,8 @@
       }
     });
 
-    const today = new Date().toISOString().split("T")[0];
-    todayCode = codeSchedule[today] || "";
+    todayCode = getSecurityCode();
+
     disableFields(true);
 
     document.getElementById('code').addEventListener('input', function () {
