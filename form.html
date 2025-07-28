@@ -78,7 +78,7 @@
 
 <script>
   const rollToName = {
-    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "TUSHAR", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", "52": "KUNAL BHAGAT", "53": "JATIN GILHOTRA", "54": "LAKSH KALIA", "55": "LAKSHAY JOSHI", "56": "MAANSHU DUBEY", "57": "PREET LOI", "58": "KARAN SINGH", "59": "VIBHOR JAIN", "60": "UTKARSHA RAJ SINGH", "61": "MEHAK", "62": "NIKHIL",// extend as needed
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "TUSHAR", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", "52": "KUNAL BHAGAT", "53": "JATIN GILHOTRA", "54": "LAKSH KALIA", "55": "LAKSHAY JOSHI", "56": "MAANSHU DUBEY", "57": "PREET LOI", "58": "KARAN SINGH", "59": "VIBHOR JAIN", "60": "UTKARSHA RAJ SINGH", "61": "MEHAK", "62": "NIKHIL"
   };
 
   const codeSchedule = {
@@ -137,33 +137,36 @@
     });
 
     document.getElementById('attendanceForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
       const now = new Date();
       const ISTTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
       const hour = ISTTime.getHours();
       const minute = ISTTime.getMinutes();
       if (!(hour === 13 && minute >= 30 || hour === 14 && minute <= 15)) {
         alert("Form accessible only between 1:30 PM and 2:15 PM IST");
-        e.preventDefault();
         return;
       }
 
       const codeInput = document.getElementById('code').value.trim().toUpperCase();
       if (codeInput !== todayCode) {
         document.getElementById('codeError').classList.remove('hidden');
-        e.preventDefault();
         return;
       }
 
       const confirmed = confirm("Attendance submitted successfully. Click OK to proceed.");
       if (confirmed) {
-        window.location.href = "THANKS.html"; // ✅ Redirect to THANKS.html
+        document.getElementById('attendanceForm').submit();
+        setTimeout(() => {
+          window.location.href = "THANKS.html";
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          document.getElementById('attendanceForm').reset();
+          document.getElementById('name').value = "";
+          disableFields(true);
+        }, 500);
       }
-
-      setTimeout(() => {
-        document.getElementById('attendanceForm').reset();
-        document.getElementById('name').value = "";
-        disableFields(true);
-      }, 500);
     });
   };
 </script>
