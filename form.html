@@ -206,7 +206,7 @@
       const ISTTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
       const hour = ISTTime.getHours();
       const minute = ISTTime.getMinutes();
-      if (!(hour === 10 && minute >= 30 || hour === 11 && minute <= 10)) {
+      if (!(hour === 09 && minute >= 30 || hour === 11 && minute <= 10)) {
         alert("Form accessible only between 10:30 AM and 11:10 AM IST");
         return;
       }
