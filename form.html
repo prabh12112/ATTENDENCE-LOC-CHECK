@@ -120,7 +120,7 @@
     "57": "PREET LOI", "58": "KARAN SINGH", "59": "VIBHOR JAIN", "60": "UTKARSHA RAJ SINGH", "61": "MEHAK", "62": "NIKHIL"
   };
 
-  function getSecurityCode() {
+function getSecurityCode() {
   const schedule = [
     { date: "29/07/2025", period: 1, code: "843" },
     { date: "29/07/2025", period: 2, code: "612" },
@@ -157,6 +157,34 @@
     { date: "12/08/2025", period: 1, code: "408" },
     { date: "12/08/2025", period: 2, code: "956" }
   ];
+
+  const now = new Date();
+  const dayName = now.toLocaleDateString("en-US", { weekday: "long", timeZone: "Asia/Kolkata" });
+  const dateStr = now.toLocaleDateString("en-GB", { timeZone: "Asia/Kolkata" });
+
+  const timeNow = now.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Kolkata"
+  });
+
+  const periodSlots = formSchedule[dayName];
+  if (!periodSlots) return "CLOSED";
+
+  let matchedPeriod = null;
+
+  periodSlots.forEach((slot, index) => {
+    if (timeNow >= slot.start && timeNow <= slot.end) {
+      matchedPeriod = index + 1;
+    }
+  });
+
+  if (!matchedPeriod) return "CLOSED";
+
+  const entry = schedule.find(item => item.date === dateStr && item.period === matchedPeriod);
+  return entry ? entry.code : "CLOSED";
+}
 
   const now = new Date();
   const day = now.getDay(); // 0 = Sun, ..., 6 = Sat
