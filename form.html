@@ -1007,24 +1007,48 @@
       method: 'POST',
       body: formData
     })
-    .then(response => {
-      if (response.ok) {
-        alert('Attendance submitted successfully!');
-        form.reset();
-        document.getElementById('dropdownSelected').textContent = 'Select Roll Number';
-        document.getElementById('code').style.borderColor = 'var(--input-border)';
-      } else {
-        throw new Error('Submission failed');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Error submitting attendance. Please try again.');
-    })
-    .finally(() => {
-      submitButton.disabled = false;
-      submitButton.textContent = 'Submit Attendance';
-    });
+.then(response => {
+  if (response.ok) {
+    const successMsg = document.createElement('div');
+    successMsg.textContent = "✅ Attendance submitted successfully! Reloading...";
+    successMsg.style.color = "#4CAF50";
+    successMsg.style.textAlign = "center";
+    successMsg.style.marginTop = "20px";
+    successMsg.style.fontSize = "1.1rem";
+
+    form.parentNode.insertBefore(successMsg, form.nextSibling);
+    form.reset();
+    form.style.display = "none";
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+  } else {
+    const errorMsg = document.createElement('div');
+    errorMsg.textContent = "❌ Error submitting attendance. Please try again.";
+    errorMsg.style.color = "#f44336";
+    errorMsg.style.textAlign = "center";
+    errorMsg.style.marginTop = "20px";
+    errorMsg.style.fontSize = "1.1rem";
+
+    form.parentNode.insertBefore(errorMsg, form.nextSibling);
+  }
+})
+  .catch(error => {
+  console.error('Error:', error);
+  const errorMsg = document.createElement('div');
+  errorMsg.textContent = "❌ Error submitting attendance. Please try again.";
+  errorMsg.style.color = "#f44336";
+  errorMsg.style.textAlign = "center";
+  errorMsg.style.marginTop = "20px";
+  errorMsg.style.fontSize = "1.1rem";
+
+  form.parentNode.insertBefore(errorMsg, form.nextSibling);
+})
+.finally(() => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Submit Attendance';
+});
   }
 
   // Utility functions
@@ -1057,42 +1081,84 @@
   });
 </script>
   
-  <script>
-  // Attendance allowed from 12:00 PM to 12:45 PM only
-  const formStart = "10:30"; // Start time in 24-hour format
-  const formEnd = "11:00";   // End time in 24-hour format
+<script>
+  const formStart = "10:30"; // 10:30 AM
+  const formEnd = "11:00";   // 11:00 AM
 
-  // Function to check if current time is within allowed range
-  function isTimeWithinRange(start, end) {
+  function isTimeWithinCrossMidnightRange(start, end) {
     const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     const [startHour, startMin] = start.split(":").map(Number);
     const [endHour, endMin] = end.split(":").map(Number);
 
-    const startTime = startHour * 60 + startMin;
-    const endTime = endHour * 60 + endMin;
+    const startMinutes = startHour * 60 + startMin;
+    const endMinutes = endHour * 60 + endMin;
 
-    return currentTime >= startTime && currentTime <= endTime;
+    if (startMinutes < endMinutes) {
+      // Normal same-day range
+      return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+    } else {
+      // Cross-midnight range
+      return currentMinutes >= startMinutes || currentMinutes <= endMinutes;
+    }
   }
 
-  // On page load, check time and control form visibility
   window.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("attendanceForm");
     const message = document.createElement("div");
-
     message.style.color = "#ff4d4d";
     message.style.textAlign = "center";
     message.style.margin = "20px";
     message.style.fontSize = "1.1rem";
 
-    if (!isTimeWithinRange(formStart, formEnd)) {
+    if (!isTimeWithinCrossMidnightRange(formStart, formEnd)) {
       form.style.display = "none";
-      message.textContent = "⏰ Attendance is only allowed between 10:30 AM and 11:00 AM.";
+      message.textContent = "⏰ Attendance is only allowed from 10:30 AM to 11:00 AM.";
       form.parentNode.insertBefore(message, form);
     }
   });
 </script>
+  
+  <script>
+  const cooldownHours = 0.5; // 12-hour cooldown
+  const localStorageKey = "lastAttendanceTimestamp";
+  const form = document.getElementById("attendanceForm");
+
+  function hoursSinceLastAttendance() {
+    const last = localStorage.getItem(localStorageKey);
+    if (!last) return Infinity; // First-time visit
+    const lastTime = new Date(parseInt(last));
+    const now = new Date();
+    const diffMs = now - lastTime;
+    return diffMs / (1000 * 60 * 60); // in hours
+  }
+
+  function disableForm(reason) {
+    form.style.display = "none";
+    const message = document.createElement("div");
+    message.style.color = "#ff4d4d";
+    message.style.textAlign = "center";
+    message.style.margin = "20px";
+    message.style.fontSize = "1.1rem";
+    message.textContent = reason;
+    form.parentNode.insertBefore(message, form);
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    // Check if already submitted in the last 12 hours
+    if (hoursSinceLastAttendance() < cooldownHours) {
+      disableForm("⚠️ You’ve already marked attendance from this device.");
+      return;
+    }
+
+    // Attach submission listener
+    form.addEventListener("submit", () => {
+      localStorage.setItem(localStorageKey, Date.now().toString());
+    });
+  });
+</script>
+
 
 </body>
 </html>
