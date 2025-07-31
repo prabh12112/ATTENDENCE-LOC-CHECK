@@ -4,98 +4,757 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Attendance Form</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-    body { background-color: #121212; color: #ffffff; overflow-x: hidden; }
-    #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: all 0.5s ease; }
-    #preloader.fade-out { opacity: 0; transform: scale(0); pointer-events: none; }
-    .spinner { border: 4px solid #ccc; border-top: 4px solid rgba(30, 144, 255, 0.5); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
-    header { display: flex; align-items: center; gap: 1rem; padding: 0.6rem 1.5rem; background-color: #1a1a1a; }
-    .logo-container { background: white; border-radius: 8px; padding: 4px; }
-    .logo-container img { height: 40px; width: auto; }
-    h1 { font-size: 1.2rem; }
-    main { position: relative; z-index: 1; padding: 2rem; text-align: center; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateX(-20px); transition: opacity 1s ease, transform 1s ease; }
-    main.visible { opacity: 1; transform: translateX(0); }
-    main::before { content: ""; background-image: url('python-blog-image.jpg'); background-size: cover; background-position: center; position: absolute; inset: 0; z-index: -2; opacity: 0.25; filter: brightness(0.6); }
-    main::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.9) 100%); z-index: -1; }
-    form { background-color: rgba(0,0,0,0.6); padding: 2rem; border-radius: 12px; max-width: 600px; width: 100%; margin: 2rem auto; box-shadow: 0 0 20px rgba(0,0,0,0.4); text-align: left; }
-    label { display: block; margin: 1rem 0 0.5rem; }
-    input[type="text"], input[type="checkbox"] { width: 100%; padding: 0.7rem; border-radius: 8px; border: none; background-color: #222; color: white; }
-    input[readonly] { background-color: #333; }
-    button { margin-top: 1rem; width: 100%; padding: 0.8rem; border: none; border-radius: 8px; background-color: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; }
-    button:hover { background-color: #03a9f4; }
-    .hidden { display: none; }
-    .error { color: red; font-size: 0.9rem; }
+    :root {
+      --bg-color: #0a0e27;
+      --text-color: #fff;
+      --header-bg: rgba(10, 14, 39, 0.4);
+      --card-bg: rgba(10, 14, 39, 0.3);
+      --link-color: #e3f2fd;
+      --hover-bg: rgba(255, 255, 255, 0.1);
+      --button-gradient: linear-gradient(135deg, #3f51b5, #1976d2);
+      --button-hover: linear-gradient(135deg, #1976d2, #1565c0);
+      --success-color: #4caf50;
+      --error-color: #f44336;
+      --input-bg: rgba(255, 255, 255, 0.1);
+      --input-border: rgba(255, 255, 255, 0.2);
+    }
 
-    /* Custom Dropdown Styles with Animation */
+    body.light {
+      --bg-color: #e8eaf6;
+      --text-color: #0a0e27;
+      --header-bg: rgba(232, 234, 246, 0.4);
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --link-color: #3f51b5;
+      --hover-bg: rgba(63, 81, 181, 0.1);
+      --button-gradient: linear-gradient(135deg, #3f51b5, #1976d2);
+      --button-hover: linear-gradient(135deg, #1976d2, #1565c0);
+      --input-bg: rgba(255, 255, 255, 0.9);
+      --input-border: rgba(63, 81, 181, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: all 0.3s ease;
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body.menu-open {
+      overflow: hidden;
+    }
+
+    /* Fixed Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--header-bg);
+      backdrop-filter: blur(25px) saturate(180%);
+      -webkit-backdrop-filter: blur(25px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      height: 80px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    .logo-container img {
+      height: 50px;
+      width: auto;
+      background: white;
+      border-radius: 10px;
+      padding: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .header-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .header-title span {
+      font-size: 0.75rem;
+      color: var(--link-color);
+      font-weight: 500;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .menu-icons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .toggle-mode {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--text-color);
+      cursor: pointer;
+      padding: 0.6rem;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px;
+      width: 50px;
+      top: -17px;
+      right: 10px;
+
+    }
+
+    .toggle-mode:hover {
+      transform: scale(1.1);
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .menu-toggle span {
+      height: 3px;
+      width: 25px;
+      background: var(--text-color);
+      margin: 3px 0;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--link-color);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      position: relative;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    nav a:hover {
+      background: var(--hover-bg);
+      transform: translateY(-2px);
+      color: var(--text-color);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Mobile Navigation */
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+        height: 70px;
+      }
+
+      .logo-container img {
+        height: 40px;
+        display: none;
+      }
+
+      .header-title h1 {
+        font-size: 1.1rem;
+      }
+
+      .header-title span {
+        font-size: 0.65rem;
+      }
+
+      .menu-toggle {
+        display: fleX;
+      }
+
+      nav {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: var(--header-bg);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        flex-direction: column;
+        padding: 1rem;
+        gap: 0.5rem;
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        z-index: 999;
+      }
+
+      nav.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      nav a {
+        padding: 1rem;
+        margin: 0.2rem 0;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        pointer-events: none;
+        transition: pointer-events 0s 0.4s;
+      }
+
+      nav.active a {
+        pointer-events: auto;
+        transition: pointer-events 0s 0s;
+      }
+    }
+
+    /* Main Content */
+    main {
+      margin-top: 80px;
+      padding: 3rem 2rem;
+      min-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s ease;
+    }
+
+    main.menu-open {
+      transform: translateY(340px);
+    }
+
+    /* Form Styles */
+    form {
+      background: var(--card-bg);
+      backdrop-filter: blur(25px) saturate(180%);
+      -webkit-backdrop-filter: blur(25px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 3rem;
+      border-radius: 20px;
+      max-width: 600px;
+      width: 100%;
+      margin: 2rem auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    form::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    form h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #64b5f6, #2196f3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin: 1.5rem 0 0.8rem;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-color);
+    }
+
+    input[type="text"], input[type="hidden"] {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 2px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--link-color);
+      box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+      transform: translateY(-2px);
+    }
+
+    input[readonly] {
+      background: rgba(255, 255, 255, 0.05);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    /* Custom Dropdown Styles */
     .custom-dropdown {
       position: relative;
       user-select: none;
     }
+
     .dropdown-selected {
-      padding: 0.7rem;
-      background-color: #222;
-      color: white;
-      border-radius: 8px;
+      width: 100%;
+      padding: 1rem;
+      background: var(--input-bg);
+      color: var(--text-color);
+      border: 2px solid var(--input-border);
+      border-radius: 12px;
       cursor: pointer;
-      border: none;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+
+    .dropdown-selected::after {
+      content: '▼';
+      font-size: 0.8rem;
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown-selected:hover {
+      border-color: var(--link-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-selected.active::after {
+      transform: rotate(180deg);
+    }
+
     .dropdown-options {
       position: absolute;
       top: 100%;
       left: 0;
       right: 0;
       max-height: 0;
-      overflow-y: hidden;
-      background-color: #222;
-      border: 1px solid #444;
-      border-radius: 8px;
+      overflow: hidden;
+      background: #1a1a2e;
+      border: 2px solid var(--input-border);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
       z-index: 10;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       opacity: 0;
-      transition: max-height 0.3s ease, opacity 0.3s ease;
-      scroll-behavior: smooth;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
     }
+
+    body.light .dropdown-options {
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
     .dropdown-options.show {
       max-height: 200px;
       opacity: 1;
       overflow-y: auto;
-    }
-    .dropdown-options div {
-      padding: 0.7rem;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .dropdown-options div:hover {
-      background-color: #333;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
 
-    footer { background-color: #1a1a1a; color: white; padding: 2rem; text-align: center; }
-    .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin-bottom: 1rem; text-align: left; }
-    .footer-section h4 { font-size: 0.9rem; margin-bottom: 0.5rem; }
-    .footer-section ul { list-style: none; padding: 0; font-size: 0.8rem; }
-    .footer-section li { margin-bottom: 4px; }
-    .footer-section a { color: #ccc; text-decoration: none; font-size: 0.8rem; }
-    .footer-divider { height: 1px; background: #444; margin: 1rem 0; opacity: 0.4; }
-    .footer-bottom { font-size: 0.75rem; text-align: center; margin-top: 1rem; }
+    .dropdown-options.show::-webkit-scrollbar {
+      display: none;
+    }
+
+    .dropdown-options div {
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown-options div:hover {
+      background: var(--hover-bg);
+      transform: translateX(5px);
+    }
+
+    .dropdown-options div:last-child {
+      border-bottom: none;
+    }
+
+    /* Checkbox Styles */
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2rem 0;
+      padding: 1rem;
+      background: var(--input-bg);
+      border-radius: 12px;
+      border: 2px solid var(--input-border);
+      transition: all 0.3s ease;
+    }
+
+    .checkbox-container:hover {
+      border-color: var(--link-color);
+      transform: translateY(-2px);
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--link-color);
+      cursor: pointer;
+    }
+
+    .checkbox-container label {
+      margin: 0;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    /* Button Styles */
+    button {
+      margin-top: 2rem;
+      width: 100%;
+      padding: 1.5rem 2rem;
+      border: none;
+      border-radius: 12px;
+      background: var(--button-gradient);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(63, 81, 181, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s;
+    }
+
+    button:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(63, 81, 181, 0.4);
+      background: var(--button-hover);
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:active {
+      transform: translateY(-2px) scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    button:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Error Styles */
+    .error {
+      color: var(--error-color);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      padding: 0.8rem;
+      background: rgba(244, 67, 54, 0.1);
+      border: 1px solid rgba(244, 67, 54, 0.3);
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 768px) {
+      main {
+        padding: 2rem 1rem;
+        margin-top: 70px;
+        min-height: calc(100vh - 70px);
+      }
+
+      main.menu-open {
+        transform: translateY(360px);
+      }
+
+      form {
+        padding: 2rem 1.5rem;
+        margin: 1rem auto;
+        border-radius: 16px;
+      }
+
+      form h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+      }
+
+      input[type="text"], .dropdown-selected {
+        padding: 0.8rem;
+        font-size: 0.95rem;
+      }
+
+      button {
+        padding: 1.2rem 1.5rem;
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 0.8rem;
+      }
+
+      main {
+        padding: 1.5rem 0.8rem;
+      }
+
+      form {
+        padding: 1.5rem 1rem;
+      }
+
+      form h2 {
+        font-size: 1.6rem;
+      }
+
+      input[type="text"], .dropdown-selected {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+      }
+
+      button {
+        padding: 1rem 1.2rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Footer */
+    footer {
+      background: var(--header-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-color);
+      padding: 3rem 2rem 2rem;
+      position: relative;
+      z-index: 10;
+      transition: all 0.4s ease;
+    }
+
+    footer.menu-open {
+      transform: translateY(340px);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .footer-section h4 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+      font-weight: normal;
+    }
+
+    .footer-section li {
+      margin-bottom: 0.5rem;
+      font-weight: normal;
+      color: var(--link-color);
+    }
+
+    .footer-section a {
+      color: var(--link-color);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      color: var(--text-color);
+      transform: translateX(5px);
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 2rem 0;
+    }
+
+    .footer-bottom {
+      font-size: 0.85rem;
+      text-align: center;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      footer {
+        padding: 1.5rem 1rem 1rem;
+      }
+
+      footer.menu-open {
+        transform: translateY(360px);
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .footer-section h4 {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-section a {
+        font-size: 0.8rem;
+      }
+
+      .footer-section li {
+        margin-bottom: 0.3rem;
+        font-weight: normal;
+        font-size: 0.8rem;
+      }
+
+      .footer-divider {
+        margin: 1rem 0;
+      }
+
+      .footer-bottom {
+        font-size: 0.75rem;
+      }
+    }
   </style>
 </head>
 <body oncontextmenu="return false">
-<div id="preloader"><div class="spinner"></div></div>
 
 <header>
-  <div class="logo-container"><img src="logo-512x512-1.png" alt="DAV Logo"></div>
-  <h1>D.A.V. College Jalandhar</h1>
+  <div class="logo-container">
+    <img src="logo-512x512-1.png" alt="DAV Logo" />
+    <div class="header-title">
+      <h1>D.A.V. College Jalandhar</h1>
+      <span>ATTENDANCE FORM</span>
+    </div>
+  </div>
+
+  <div class="menu-icons">
+    <button class="toggle-mode" id="darkModeBtn" title="Toggle theme">🌙</button>
+    <div class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <nav id="navMenu">
+    <a href="https://prabh12112.github.io/MAIN-PAGE/#">Home</a>
+    <a href="https://prabh12112.github.io/MAIN-PAGE/attendance.html">Attendance</a>
+    <a href="https://prabh12112.github.io/MAIN-PAGE/resources.html">Resources</a>
+    <a href="https://prabh12112.github.io/MAIN-PAGE/events.html">Events</a>
+    <a href="https://prabh12112.github.io/MAIN-PAGE/about%20institute.html">About Institute</a>
+  </nav>
 </header>
 
-<main id="main-content">
+<main id="mainContent">
   <form id="attendanceForm" method="POST" action="https://script.google.com/macros/s/AKfycbxSVOE1_zV-N_fFAi6U1i-cRD6zObrb_1MlFsbNkJd-ps8xCzq7-OcNZBPJKaymNk-rNg/exec" target="hidden_iframe">
     <h2>Attendance Form</h2>
 
     <label for="code">Security Code</label>
-    <input type="text" id="code" maxlength="3" required>
+    <input type="text" id="code" maxlength="3" required placeholder="Enter security code">
     <div id="codeError" class="error hidden">Invalid code. Please try again.</div>
 
     <label for="roll">Roll Number</label>
@@ -106,133 +765,297 @@
     </div>
 
     <label for="name">Name</label>
-    <input type="text" id="name" name="name" readonly required>
+    <input type="text" id="name" name="name" readonly required placeholder="Name will appear here">
 
-    <label><input type="checkbox" id="confirm" required> I confirm that I am present.</label>
+    <div class="checkbox-container">
+      <input type="checkbox" id="confirm" required>
+      <label for="confirm">I confirm that I am present and the information provided is accurate.</label>
+    </div>
+
     <button type="submit">Submit Attendance</button>
   </form>
 </main>
+
 <iframe name="hidden_iframe" style="display:none;"></iframe>
 
-<footer>
+<footer id="footerContent">
   <div class="footer-content">
-    <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="#">Attendance Policy</a></li></ul></div>
-    <div class="footer-section"><h4>Social Media</h4><ul><li><a href="https://www.youtube.com/@nischaybahl7714" target="_blank">YouTube</a></li></ul></div>
-    <div class="footer-section"><h4>Contact</h4><ul><li><a href="mailto:bca25.28.dav@gmail.com">bca25.28.dav@gmail.com</a></li></ul></div>
-    <div class="footer-section"><h4>Address</h4><ul><li>D.A.V. College, Mahatma Hansraj Marg,<br>Jalandhar, Punjab – 144008, India</li></ul></div>
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="https://prabh12112.github.io/MAIN-PAGE/attendance%20policy.html">Attendance Policy</a></li>
+        <li><a href="#" onclick="scrollToTop()">Back to Top</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Social Media</h4>
+      <ul>
+        <li><a href="https://www.youtube.com/@nischaybahl7714" target="_blank">YouTube Channel</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Contact Information</h4>
+      <ul>
+        <li><a href="mailto:bca25.28.dav@gmail.com">bca25.28.dav@gmail.com</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Campus Address</h4>
+      <ul>
+        <li>D.A.V. College, Mahatma Hansraj Marg,<br>Jalandhar, Punjab – 144008, India</li>
+      </ul>
+    </div>
   </div>
   <div class="footer-divider"></div>
-  <div class="footer-bottom">© 2025 | Credits: Prabhsimranjot Singh, BCA (FCA-1)</div>
+  <div class="footer-bottom">
+    © 2025 D.A.V. College Jalandhar | Developed by Prabhsimranjot Singh, BCA (FCA-1)
+  </div>
 </footer>
 
 <script>
+  // Student data
   const rollToName = {
-    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", "6": "TUSHAR", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", "52": "KUNAL BHAGAT", "53": "JATIN GILHOTRA", "54": "LAKSH KALIA", "55": "LAKSHAY JOSHI", "56": "MAANSHU DUBEY", "57": "PREET LOI", "58": "KARAN SINGH", "59": "VIBHOR JAIN", "60": "UTKARSHA RAJ SINGH", "61": "MEHAK", "62": "NIKHIL"
+    "1": "CHIRAG RANA", "2": "SHARANJIT SINGH", "3": "ANEESH KUMAR", "4": "JATINVEER", "5": "SOHAN KUMAR", 
+    "6": "TUSHAR", "7": "VANSH SHARMA", "8": "SAGAR KUMAR MANDAL", "9": "MEHAK", "10": "MANREET KAUR", 
+    "11": "ARUSHI", "12": "MANNAT", "13": "SURAJ SINGH", "14": "DIPANKAR", "15": "SNEHA", 
+    "16": "NAVJOT KAUR", "17": "ADITYA SHARMA", "18": "ROHAN", "19": "DAMANJEET", "20": "SHIVAM PANDEY", 
+    "21": "NITIN", "22": "NIKHIL", "23": "AARUSHI MALHOTRA", "24": "ANKIT KUMAR", "25": "EKAMJEET KAUR KALRA", 
+    "26": "SHIVAM", "27": "PRABHSIMRANJOT SINGH", "28": "SUMANT SHARMA", "29": "HARSHIT", "30": "NAMPREET SINGH", 
+    "31": "TANUSH", "32": "PARTH AULUCK", "33": "TANISH JAIN", "34": "PALAK BHARDWAJ", "35": "AKASH DEEP", 
+    "36": "AYUSH KUMAR", "37": "LAKSH", "38": "JASHAN ARORA", "39": "KRISHAN SINGH", "40": "KULWINDER KAUR", 
+    "41": "DAKSH CHAUHAN", "42": "DIWAKAR", "43": "SARUCHI SHARMA", "44": "AMRITPAL SINGH", "45": "GLORY", 
+    "46": "SIMRAN", "47": "MANIK", "48": "OM TALWAR", "49": "NITIN KUMARN BASRA", "50": "KHUSHI", 
+    "52": "KUNAL BHAGAT", "53": "JATIN GILHOTRA", "54": "LAKSH KALIA", "55": "LAKSHAY JOSHI", "56": "MAANSHU DUBEY", 
+    "57": "PREET LOI", "58": "KARAN SINGH", "59": "VIBHOR JAIN", "60": "UTKARSHA RAJ SINGH", "61": "MEHAK", "62": "NIKHIL"
   };
 
+  // Security codes by date
   const codeSchedule = {
-    "2025-07-27": "ABC", "2025-07-28": "XUZ", "2025-07-29": "11A",
-    "2025-07-30": "323", "2025-07-31": "AIK", "2025-07-01": "MLK",
-    "2025-07-02": "PQR", "2025-07-03": "XUZ", "2025-07-04": "MST", "2025-07-05": "3KQ"
+    "2025-07-31": "ABC", // Today's code for testing
+    "2025-08-01": "XYZ",
+    "2025-08-02": "123"
   };
 
-  let todayCode = "";
-
-  function disableFields(disabled) {
-    document.getElementById('roll').disabled = disabled;
-    document.getElementById('confirm').disabled = disabled;
-    document.querySelector('button[type="submit"]').disabled = disabled;
+  // Get today's date in YYYY-MM-DD format
+  function getTodayDate() {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
   }
 
-  window.onload = function () {
-    setTimeout(() => {
-      document.getElementById('preloader').classList.add('fade-out');
-      document.getElementById('main-content').classList.add('visible');
-    }, 1500);
+  // Initialize page
+  function initializePage() {
+    // Populate dropdown options
+    const dropdownOptions = document.getElementById('dropdownOptions');
+    Object.keys(rollToName).forEach(roll => {
+      const option = document.createElement('div');
+      option.textContent = `Roll ${roll} - ${rollToName[roll]}`;
+      option.dataset.roll = roll;
+      option.addEventListener('click', selectRoll);
+      dropdownOptions.appendChild(option);
+    });
 
-    // Dropdown population & handling
+    // Setup dropdown functionality
+    const dropdownSelected = document.getElementById('dropdownSelected');
+    dropdownSelected.addEventListener('click', toggleDropdown);
+
+    // Setup form validation
+    const codeInput = document.getElementById('code');
+    codeInput.addEventListener('input', validateCode);
+
+    // Setup form submission
+    const form = document.getElementById('attendanceForm');
+    form.addEventListener('submit', handleFormSubmit);
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!document.getElementById('customDropdown').contains(e.target)) {
+        closeDropdown();
+      }
+    });
+
+    // Setup mobile menu - FIXED VERSION FROM CODE 2
+    const toggle = document.getElementById('menuToggle');
+    const nav = document.getElementById('navMenu');
+    const mainContent = document.getElementById('mainContent');
+    const footerContent = document.getElementById('footerContent');
+    
+    toggle.addEventListener('click', () => {
+      nav.classList.toggle('active');
+      toggle.classList.toggle('active');
+      
+      if (nav.classList.contains('active')) {
+        mainContent.classList.add('menu-open');
+        footerContent.classList.add('menu-open');
+        document.body.classList.add('menu-open');
+      } else {
+        mainContent.classList.remove('menu-open');
+        footerContent.classList.remove('menu-open');
+        document.body.classList.remove('menu-open');
+      }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!toggle.contains(e.target) && !nav.contains(e.target)) {
+        nav.classList.remove('active');
+        toggle.classList.remove('active');
+        mainContent.classList.remove('menu-open');
+        footerContent.classList.remove('menu-open');
+        document.body.classList.remove('menu-open');
+      }
+    });
+
+    // Setup theme toggle
+    const modeBtn = document.getElementById('darkModeBtn');
+    
+    modeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light');
+      modeBtn.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+    });
+  }
+
+  // Dropdown functions
+  function toggleDropdown() {
+    const dropdown = document.getElementById('dropdownOptions');
+    const selected = document.getElementById('dropdownSelected');
+    
+    dropdown.classList.toggle('show');
+    selected.classList.toggle('active');
+  }
+
+  function closeDropdown() {
+    const dropdown = document.getElementById('dropdownOptions');
+    const selected = document.getElementById('dropdownSelected');
+    
+    dropdown.classList.remove('show');
+    selected.classList.remove('active');
+  }
+
+  function selectRoll(event) {
+    const roll = event.target.dataset.roll;
     const rollInput = document.getElementById('roll');
     const nameInput = document.getElementById('name');
     const dropdownSelected = document.getElementById('dropdownSelected');
-    const dropdownOptions = document.getElementById('dropdownOptions');
-    const dropdown = document.getElementById('customDropdown');
+    
+    rollInput.value = roll;
+    nameInput.value = rollToName[roll];
+    dropdownSelected.textContent = `Roll ${roll} - ${rollToName[roll]}`;
+    
+    closeDropdown();
+  }
 
-    Object.keys(rollToName).sort((a, b) => a - b).forEach(roll => {
-      const div = document.createElement('div');
-      div.textContent = roll;
-      div.dataset.value = roll;
-      dropdownOptions.appendChild(div);
-    });
-
-    dropdownSelected.addEventListener('click', () => {
-      dropdownOptions.classList.toggle('show');
-    });
-
-    dropdownOptions.addEventListener('click', e => {
-      if (e.target.dataset.value) {
-        const roll = e.target.dataset.value;
-        rollInput.value = roll;
-        dropdownSelected.textContent = roll;
-        nameInput.value = rollToName[roll] || '';
-        dropdownOptions.classList.remove('show');
-      }
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!dropdown.contains(e.target)) {
-        dropdownOptions.classList.remove('show');
-      }
-    });
-
-    const today = new Date().toISOString().split("T")[0];
-    todayCode = codeSchedule[today] || "";
-    disableFields(true);
-
-    document.getElementById('code').addEventListener('input', function () {
-      const inputCode = this.value.trim().toUpperCase();
-      if (inputCode === todayCode) {
-        document.getElementById('codeError').classList.add('hidden');
-        disableFields(false);
+  // Code validation
+  function validateCode() {
+    const codeInput = document.getElementById('code');
+    const codeError = document.getElementById('codeError');
+    const todayCode = codeSchedule[getTodayDate()];
+    
+    if (codeInput.value.length === 3) {
+      if (codeInput.value.toUpperCase() === todayCode) {
+        codeError.classList.add('hidden');
+        codeInput.style.borderColor = 'var(--success-color)';
+        return true;
       } else {
-        disableFields(true);
-        document.getElementById('codeError').classList.remove('hidden');
+        codeError.classList.remove('hidden');
+        codeInput.style.borderColor = 'var(--error-color)';
+        return false;
       }
-    });
+    } else {
+      codeError.classList.add('hidden');
+      codeInput.style.borderColor = 'var(--input-border)';
+      return false;
+    }
+  }
 
-    document.getElementById('attendanceForm').addEventListener('submit', function (e) {
+  // Form submission
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    const isCodeValid = validateCode();
+    const rollValue = document.getElementById('roll').value;
+    const confirmChecked = document.getElementById('confirm').checked;
+    
+    if (!isCodeValid) {
+      alert('Please enter a valid security code.');
+      return;
+    }
+    
+    if (!rollValue) {
+      alert('Please select your roll number.');
+      return;
+    }
+    
+    if (!confirmChecked) {
+      alert('Please confirm your attendance.');
+      return;
+    }
+    
+    // Submit the form
+    const form = document.getElementById('attendanceForm');
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+    
+    // Create form data
+    const formData = new FormData(form);
+    formData.append('timestamp', new Date().toISOString());
+    formData.append('date', getTodayDate());
+    
+    // Submit to Google Apps Script
+    fetch(form.action, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Attendance submitted successfully!');
+        form.reset();
+        document.getElementById('dropdownSelected').textContent = 'Select Roll Number';
+        document.getElementById('code').style.borderColor = 'var(--input-border)';
+      } else {
+        throw new Error('Submission failed');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error submitting attendance. Please try again.');
+    })
+    .finally(() => {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Submit Attendance';
+    });
+  }
+
+  // Utility functions
+  function scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
+  // Initialize when page loads
+  document.addEventListener('DOMContentLoaded', initializePage);
+
+  // Prevent context menu
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
       e.preventDefault();
-
-      const now = new Date();
-      const ISTTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
-      const hour = ISTTime.getHours();
-      const minute = ISTTime.getMinutes();
-      if (!(hour === 10 && minute >= 30 || hour === 11 && minute <= 10)) {
-        alert("Form accessible only between 10:30 AM and 11:10 AM IST");
-        return;
-      }
-
-      const codeInput = document.getElementById('code').value.trim().toUpperCase();
-      if (codeInput !== todayCode) {
-        document.getElementById('codeError').classList.remove('hidden');
-        return;
-      }
-
-      const confirmed = confirm("Attendance submitted successfully. Click OK to proceed.");
-      if (confirmed) {
-        document.getElementById('attendanceForm').submit();
-        setTimeout(() => {
-          window.location.href = "THANKS.html";
-        }, 1000);
-      } else {
-        setTimeout(() => {
-          document.getElementById('attendanceForm').reset();
-          nameInput.value = "";
-          dropdownSelected.textContent = "Select Roll Number";
-          disableFields(true);
-        }, 500);
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth'
+        });
       }
     });
-  };
+  });
 </script>
+
 </body>
 </html>
