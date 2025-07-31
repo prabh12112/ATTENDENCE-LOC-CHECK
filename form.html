@@ -1056,6 +1056,43 @@
     });
   });
 </script>
+  
+  <script>
+  // Attendance allowed from 12:00 PM to 12:45 PM only
+  const formStart = "10:30"; // Start time in 24-hour format
+  const formEnd = "11:00";   // End time in 24-hour format
+
+  // Function to check if current time is within allowed range
+  function isTimeWithinRange(start, end) {
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+    const [startHour, startMin] = start.split(":").map(Number);
+    const [endHour, endMin] = end.split(":").map(Number);
+
+    const startTime = startHour * 60 + startMin;
+    const endTime = endHour * 60 + endMin;
+
+    return currentTime >= startTime && currentTime <= endTime;
+  }
+
+  // On page load, check time and control form visibility
+  window.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("attendanceForm");
+    const message = document.createElement("div");
+
+    message.style.color = "#ff4d4d";
+    message.style.textAlign = "center";
+    message.style.margin = "20px";
+    message.style.fontSize = "1.1rem";
+
+    if (!isTimeWithinRange(formStart, formEnd)) {
+      form.style.display = "none";
+      message.textContent = "⏰ Attendance is only allowed between 10:30 AM and 11:00 AM.";
+      form.parentNode.insertBefore(message, form);
+    }
+  });
+</script>
 
 </body>
 </html>
